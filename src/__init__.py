@@ -13,14 +13,22 @@ Trading System - 模塊化、事件驅動的交易系統
 """
 
 # 核心組件導入
-from .data import MarketDataProvider, DataManager
-from .strategy import Signal, SignalType, BaseStrategy, EnhancedBaseStrategy
-from .backtest import Portfolio, BacktestEngine, BacktestResult
-from .execution import Order, OrderManager, OrderType, OrderStatus
-from .risk import RiskManager
-from .exchange import BybitConnector
-from .config import ConfigManager, config
-from .filters import FilterManager, CommonFilters
+try:
+    from .strategy import Signal, SignalType, BaseStrategy, EnhancedBaseStrategy
+    from .backtest import Portfolio, BacktestEngine, BacktestResult
+    from .execution import Order, OrderManager, OrderType, OrderStatus
+    from .risk import RiskManager
+    from .exchange import BybitConnector
+    from .config import ConfigManager
+    from .filters import FilterManager, CommonFilters
+except ImportError as e:
+    # 如果某些模塊不存在，只導入基本組件
+    print(f"Warning: Some modules could not be imported: {e}")
+    try:
+        from .strategy import Signal, SignalType, BaseStrategy
+        from .backtest import BacktestEngine
+    except ImportError:
+        pass
 
 __version__ = '1.0.0'
 

@@ -3,7 +3,7 @@ import pandas as pd
 from typing import Optional, Dict, Any, List, Callable
 import logging
 
-from .signal import Signal
+from .signal import Signal, SignalType
 
 
 class BaseStrategy(ABC):
@@ -177,3 +177,130 @@ class EnhancedBaseStrategy(BaseStrategy):
     def _generate_raw_signal(self, bar: pd.Series) -> Optional[Signal]:
         """生成原始信號（由子類實現）"""
         pass
+import pdb
+
+class SimpleMomentumStrategy(BaseStrategy):
+    """簡單動量策略 - 基於移動平均線交叉的策略
+    
+    這是一個經典的移動平均線策略實現：
+    - 當短期移動平均線上穿長期移動平均線時產生買入信號（金叉）
+    - 當短期移動平均線下穿長期移動平均線時產生賣出信號（死叉）
+    
+    適用於教學和測試目的。
+    """
+    
+    def __init__(self, short_period: int = 5, long_period: int = 15, name: str = "SimpleMomentum"):
+        """初始化簡單動量策略
+        
+        Args:
+            short_period: 短期移動平均線週期
+            long_period: 長期移動平均線週期
+            name: 策略名稱
+        """
+        super().__init__(name, {
+            'short_period': short_period,
+            'long_period': long_period
+        })
+        self.short_period = short_period
+        self.long_period = long_period
+        self.position_opened = False  # 追蹤持倉狀態
+        
+        # 參數驗證
+        if short_period >= long_period:
+            raise ValueError("短期週期必須小於長期週期")
+        if short_period <= 0 or long_period <= 0:
+            raise ValueError("週期必須為正數")
+    
+    def warmup_period(self) -> int:
+        """返回策略需要的暖身期長度"""
+        return self.long_period + 1  # 需要額外一期來計算穿越
+    
+    def reset(self) -> None:
+        """重置策略狀態"""
+        super().reset()
+        self.position_opened = False
+    
+    def on_bar(self, bar: pd.Series) -> Optional[Signal]:
+        """處理新的K線數據並生成交易信號
+        
+        Args:
+            bar: K線數據，包含OHLCV等信息
+            
+        Returns:
+            交易信號或None
+        """
+        # 更新數據緩存
+        self.update_buffer(bar)
+        
+        if not self.is_ready():
+            return None
+        
+        # 獲取最近的價格數據
+        recent_data = self.get_buffer_dataframe()
+        if len(recent_data) < self.long_period + 1:
+            return None
+        
+        prices = recent_data['close']
+        
+        # 計算移動平均線
+        short_ma = prices.rolling(window=self.short_period).mean().iloc[-1]
+        long_ma = prices.rolling(window=self.long_period).mean().iloc[-1]
+        
+        # 獲取前一期的移動平均線用於判斷穿越
+        prev_short_ma = prices.rolling(window=self.short_period).mean().iloc[-2]
+        prev_long_ma = prices.rolling(window=self.long_period).mean().iloc[-2]
+        
+        current_price = bar['close']
+        
+        # 金叉：短均線上穿長均線，生成買入信號
+        if (short_ma > long_ma and prev_short_ma <= prev_long_ma and not self.position_opened):
+            self.position_opened = True
+            self.logger.debug(f"金叉信號: short_ma={short_ma:.2f}, long_ma={long_ma:.2f}")
+            return Signal(
+                symbol="BTCUSDT",  # 默認交易對，會被回測引擎覆蓋
+                signal_type=SignalType.BUY,
+                price=current_price,
+                confidence=0.8,
+                metadata={
+                    'short_ma': short_ma,
+                    'long_ma': long_ma,
+                    'signal_type': 'golden_cross',
+                    'strategy': self.name
+                }
+            )
+        
+        # 死叉：短均線下穿長均線，生成賣出信號
+        elif (short_ma < long_ma and prev_short_ma >= prev_long_ma and self.position_opened):
+            self.position_opened = False
+            self.logger.debug(f"死叉信號: short_ma={short_ma:.2f}, long_ma={long_ma:.2f}")
+            return Signal(
+                symbol="BTCUSDT",  # 默認交易對，會被回測引擎覆蓋
+                signal_type=SignalType.SELL,
+                price=current_price,
+                confidence=0.8,
+                metadata={
+                    'short_ma': short_ma,
+                    'long_ma': long_ma,
+                    'signal_type': 'death_cross',
+                    'strategy': self.name
+                }
+            )
+        
+        return None
+    
+    def get_current_mas(self) -> Optional[Dict[str, float]]:
+        """獲取當前的移動平均線值
+        
+        Returns:
+            包含短期和長期移動平均線的字典，如果數據不足則返回None
+        """
+        if len(self.data_buffer) < self.long_period:
+            return None
+        
+        recent_data = self.get_buffer_dataframe()
+        prices = recent_data['close']
+        
+        return {
+            'short_ma': prices.rolling(window=self.short_period).mean().iloc[-1],
+            'long_ma': prices.rolling(window=self.long_period).mean().iloc[-1]
+        }

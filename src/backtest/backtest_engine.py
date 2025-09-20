@@ -4,9 +4,21 @@ from dataclasses import dataclass
 import logging
 from datetime import datetime
 
-from .portfolio import Portfolio
-from ..strategy.base_strategy import BaseStrategy
-from ..strategy.signal import Signal, SignalType
+# 條件導入 - 支持單獨運行
+try:
+    from .portfolio import Portfolio
+    from ..strategy.base_strategy import BaseStrategy  
+    from ..strategy.signal import Signal, SignalType
+except ImportError:
+    # 當作為獨立腳本運行時的導入
+    import sys
+    import os
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    sys.path.insert(0, os.path.dirname(current_dir))
+    
+    from portfolio import Portfolio
+    from strategy.base_strategy import BaseStrategy
+    from strategy.signal import Signal, SignalType
 
 
 @dataclass
@@ -88,14 +100,11 @@ class BacktestEngine:
         # 確保數據有時間索引
         if not isinstance(data.index, pd.DatetimeIndex):
             data.index = pd.to_datetime(data.index)
-        
         # 逐條處理數據
         for timestamp, bar in data.iterrows():
             self._process_bar(timestamp, bar, symbol)
-        
         end_time = datetime.now()
         duration = str(end_time - start_time)
-        
         # 生成結果
         result = self._generate_result(
             start_time=data.index[0].strftime("%Y-%m-%d %H:%M:%S"),
@@ -304,3 +313,241 @@ class MultiSymbolBacktestEngine(BacktestEngine):
         
         self.logger.info("多交易對回測完成")
         return result
+
+def main():
+    """主函數 - 回測引擎單檔測試
+    
+    此函數演示如何使用回測引擎，包括：
+    1. 生成模擬市場數據
+    2. 創建簡單的移動平均策略
+    3. 設置風險管理和過濾器
+    4. 運行回測並分析結果
+    """
+    import numpy as np
+    from datetime import datetime, timedelta
+    import sys
+    import os
+    
+    # 添加項目根目錄到路徑以便導入其他模塊
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.dirname(os.path.dirname(current_dir))
+    sys.path.insert(0, project_root)
+    
+    # 確保可以導入本地模塊
+    sys.path.insert(0, os.path.dirname(current_dir))  # src目錄
+    
+    print("🚀 回測引擎單檔測試")
+    print("=" * 60)
+    try:
+        # 設置日誌
+        logging.basicConfig(
+            level=logging.INFO,
+            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        )
+        
+        # =================== 1. 生成模擬市場數據 ===================
+        print("\n📊 1. 生成模擬市場數據...")
+        def generate_mock_data(days=60) -> pd.DataFrame:
+            """生成模擬的BTCUSDT價格數據"""
+            np.random.seed(42)  # 確保可重複性
+            
+            # 創建時間索引 (每小時一條數據)
+            end_date = datetime.now()
+            start_date = end_date - timedelta(days=days)
+            timestamps = pd.date_range(start=start_date, end=end_date, freq='1H')
+            
+            # 使用幾何布朗運動生成價格
+            initial_price = 50000  # BTC初始價格
+            volatility = 0.02     # 波動率
+            drift = 0.0001        # 漂移率
+            
+            # 生成隨機收益率
+            returns = np.random.normal(drift, volatility, len(timestamps))
+            
+            # 計算累積價格
+            log_returns = np.cumsum(returns)
+            prices = initial_price * np.exp(log_returns)
+            
+            # 生成OHLCV數據
+            data = []
+            for price in prices:
+                # 在收盤價基礎上生成開高低
+                noise = np.random.normal(0, price * 0.001)
+                open_price = price + noise
+                
+                high_price = max(open_price, price) + abs(np.random.normal(0, price * 0.002))
+                low_price = min(open_price, price) - abs(np.random.normal(0, price * 0.002))
+                close_price = price
+                volume = np.random.uniform(500, 2000)  # 隨機成交量
+                
+                data.append({
+                    'open': open_price,
+                    'high': high_price,
+                    'low': low_price,
+                    'close': close_price,
+                    'volume': volume
+                })
+            
+            return pd.DataFrame(data, index=timestamps)
+        # 生成數據
+        market_data = generate_mock_data(days=30)  # 30天數據
+        print(f"   ✅ 生成 {len(market_data)} 條數據")
+        print(f"   📅 時間範圍: {market_data.index[0]} 至 {market_data.index[-1]}")
+        print(f"   💰 價格範圍: ${market_data['close'].min():.2f} - ${market_data['close'].max():.2f}")
+        
+        # =================== 2. 創建簡單策略 ===================
+        print("\n🎯 2. 創建簡單移動平均策略...")
+        
+        # 導入策略類
+        try:
+            from strategy.base_strategy import SimpleMomentumStrategy
+        except ImportError:
+            # 如果模塊導入失敗，使用絕對導入
+            from src.strategy.base_strategy import SimpleMomentumStrategy
+        
+        # 創建策略實例
+        strategy = SimpleMomentumStrategy(short_period=5, long_period=15)
+        print(f"   ✅ 策略創建成功: {strategy.name}")
+        print(f"   📊 參數: {strategy.get_parameters()}")
+        print(f"   ⏰ 暖身期: {strategy.warmup_period()} 個週期")
+        
+        # =================== 3. 創建回測引擎 ===================
+        print("\n🔧 3. 創建回測引擎...")
+        
+        engine = BacktestEngine(
+            initial_capital=100000,  # 10萬美元初始資金
+            commission=0.001         # 0.1% 手續費
+        )
+        
+        engine.add_strategy(strategy)
+        
+        print(f"   ✅ 回測引擎創建成功")
+        print(f"   💰 初始資金: ${engine.portfolio.initial_capital:,.2f}")
+        print(f"   💸 手續費率: {engine.commission:.1%}")
+        print(f"   📉 滑點: {engine.slippage:.2%}")
+        
+        # =================== 4. 添加風險管理 ===================
+        print("\n🛡️ 4. 添加風險管理...")
+        
+        # 導入風險管理器（如果存在）
+        try:
+            from risk.risk_manager import RiskManager
+            
+            risk_manager = RiskManager(
+                max_position_size=0.8,    # 單一持倉最大80%
+                max_daily_loss=0.05,      # 日損失限制5%
+                max_drawdown=0.2,         # 最大回撤20%
+                max_positions=2           # 最多2個持倉
+            )
+            engine.set_risk_manager(risk_manager)
+            print("   ✅ 風險管理器已設置")
+            
+        except ImportError:
+            print("   ⚠️ 風險管理器模塊未找到，跳過風險管理設置")
+        
+        # =================== 5. 添加過濾器 ===================
+        print("\n🔍 5. 添加信號過濾器...")
+        
+        try:
+            from filters.filter_manager import FilterManager, CommonFilters
+            
+            filter_manager = FilterManager()
+            
+            # 添加成交量過濾器
+            filter_manager.add_global_filter(
+                CommonFilters.volume_filter(min_volume=1000),
+                name="volume_filter"
+            )
+            
+            # 添加現金保留過濾器
+            filter_manager.add_global_filter(
+                CommonFilters.cash_filter(min_cash_ratio=0.1),
+                name="cash_reserve"
+            )
+            
+            engine.set_filter_manager(filter_manager)
+            print("   ✅ 過濾器已設置")
+            
+        except ImportError as e:
+            print(f"   ⚠️ 過濾器模塊未找到，跳過過濾器設置: {e}")
+        
+        # =================== 6. 運行回測 ===================
+        print("\n🚀 6. 運行回測...")
+        print("   正在處理數據...")
+        
+        # 運行回測
+        result = engine.run(market_data, symbol="BTCUSDT")
+        
+        print("   ✅ 回測完成!")
+        
+        # =================== 7. 分析結果 ===================
+        print("\n📈 7. 回測結果分析")
+        print("=" * 60)
+        
+        # 顯示回測摘要
+        print(result.summary())
+        
+        # 詳細統計
+        print("\n📊 詳細統計:")
+        metrics = result.metrics
+        portfolio = result.portfolio
+        
+        print(f"初始資金: ${portfolio.initial_capital:,.2f}")
+        print(f"最終資產: ${portfolio.get_total_value():,.2f}")
+        print(f"淨利潤: ${portfolio.get_total_value() - portfolio.initial_capital:,.2f}")
+        print(f"總手續費: ${metrics.get('total_commission', 0):.2f}")
+        
+        # 交易統計
+        trades_df = result.trades
+        if not trades_df.empty:
+            print(f"\n💼 交易統計:")
+            print(f"總交易筆數: {len(trades_df)}")
+            
+            # 顯示最近幾筆交易
+            print(f"\n最近 5 筆交易:")
+            for _, trade in trades_df.tail(5).iterrows():
+                timestamp = pd.to_datetime(trade['timestamp'], unit='ms')
+                side_emoji = "📈" if trade['side'] == 'BUY' else "📉"
+                print(f"  {side_emoji} {timestamp.strftime('%Y-%m-%d %H:%M')} | "
+                      f"{trade['side']} {trade['quantity']:.6f} @ ${trade['price']:,.2f}")
+        else:
+            print("\n💼 交易統計: 無交易記錄")
+        
+        # 資產曲線
+        equity_df = result.equity_curve
+        if not equity_df.empty:
+            print(f"\n📈 資產曲線統計:")
+            print(f"最高淨值: ${equity_df['total_value'].max():,.2f}")
+            print(f"最低淨值: ${equity_df['total_value'].min():,.2f}")
+            print(f"淨值波動: {((equity_df['total_value'].max() - equity_df['total_value'].min()) / portfolio.initial_capital):.2%}")
+        
+        # 策略特定統計
+        print(f"\n🎯 策略統計:")
+        print(f"策略名稱: {strategy.name}")
+        print(f"參數設置: {strategy.get_parameters()}")
+        print(f"數據緩存: {len(strategy.data_buffer)} 條記錄")
+        
+        print("\n" + "=" * 60)
+        print("🎉 測試完成！")
+        print("\n💡 這個測試演示了:")
+        print("   • 如何生成模擬市場數據")
+        print("   • 如何創建簡單的交易策略")
+        print("   • 如何設置回測引擎和風險管理")
+        print("   • 如何分析回測結果")
+        print("\n🔗 接下來您可以:")
+        print("   • 修改策略參數進行實驗")
+        print("   • 添加更多的過濾器和風險控制")
+        print("   • 使用真實的市場數據進行回測")
+        
+    except Exception as e:
+        print(f"\n❌ 測試過程中發生錯誤: {e}")
+        import traceback
+        traceback.print_exc()
+        print("\n🔧 調試提示:")
+        print("   • 確保所有依賴模塊都已正確導入")
+        print("   • 檢查數據格式是否符合預期")
+        print("   • 查看日誌輸出獲取更多信息")
+
+
+if __name__ == "__main__":
+    main()

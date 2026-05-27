@@ -593,6 +593,14 @@ Build these first:
 - validators and linters
 - duplicate research search across ideas, hypotheses, reports, and decisions
 
+Initial CLI support lives in `quant_tools.artifacts`:
+
+```bash
+python3 -m quant_tools.artifacts list
+python3 -m quant_tools.artifacts new SignalContract --output artifacts/signal_contract.yaml
+python3 -m quant_tools.artifacts validate artifacts/signal_contract.yaml
+```
+
 Success condition: agents produce reviewable artifacts instead of free-form notes.
 
 ### Phase 2: Point-in-time research loop

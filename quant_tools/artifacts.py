@@ -18,6 +18,7 @@ ARTIFACT_TEMPLATES: dict[str, dict[str, Any]] = {
         "id": "",
         "created_at": "",
         "created_by": "",
+        "created_by_agent": "",
         "summary": "",
         "suspected_mechanism": "",
         "candidate_sources": [],

@@ -2,6 +2,7 @@ ResearchIdea:
   id: idea_leverage_pressure_liquidation_downside_v1
   created_at: '2026-05-27T23:19:04+08:00'
   created_by: HERMES
+  created_by_agent: JAQUAN
   summary: >
     High perpetual funding combined with rising open interest and weak spot
     confirmation may indicate crowded leveraged longs vulnerable to short-horizon

@@ -5,7 +5,8 @@
 - Artifact type: `ResearchIdea`
 - Artifact id: `idea_leverage_pressure_liquidation_downside_v1`
 - Artifact path: `artifacts/research_ideas/idea_leverage_pressure_liquidation_downside_v1.yaml`
-- Created by: `HERMES`
+- Created by role: `HERMES`
+- Created by agent: `JAQUAN`
 - Created at: `2026-05-27T23:19:04+08:00`
 - Next owner: `QUANT`
 - Priority: `high`

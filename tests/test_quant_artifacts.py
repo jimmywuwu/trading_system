@@ -29,6 +29,16 @@ def test_signal_contract_template_contains_required_research_gate_fields() -> No
     assert "trader_visible_semantics" in signal_contract
 
 
+def test_research_idea_template_preserves_role_and_agent_identity() -> None:
+    template = create_artifact_template("ResearchIdea")
+
+    research_idea = template["ResearchIdea"]
+    assert "created_by" in research_idea
+    assert "created_by_agent" in research_idea
+    assert research_idea["created_by"] == ""
+    assert research_idea["created_by_agent"] == ""
+
+
 def test_validate_artifact_reports_missing_required_fields() -> None:
     invalid = {"ResearchHypothesis": {"id": "hyp_001", "statement": "funding high means short"}}
 

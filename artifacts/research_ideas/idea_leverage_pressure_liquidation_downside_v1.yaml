@@ -1,0 +1,46 @@
+ResearchIdea:
+  id: idea_leverage_pressure_liquidation_downside_v1
+  created_at: '2026-05-27T23:19:04+08:00'
+  created_by: HERMES
+  created_by_agent: JAQUAN
+  summary: >
+    High perpetual funding combined with rising open interest and weak spot
+    confirmation may indicate crowded leveraged longs vulnerable to short-horizon
+    downside liquidation risk.
+  suspected_mechanism: >
+    Leveraged long demand pushes perpetual funding higher while open interest
+    rises. If spot demand fails to confirm the move, price support may be
+    fragile. Small adverse moves can trigger stop-losses and liquidation-driven
+    selling, creating positive feedback, weaker forward returns, larger adverse
+    excursions, or fatter downside tails over the next several hours.
+  candidate_sources:
+    - perp funding rate
+    - perp open interest
+    - perp mark/index price
+    - perp candles
+    - spot candles
+    - spot volume
+    - liquidation prints optional
+    - orderbook depth optional
+  candidate_symbols:
+    - BTC-PERP
+    - ETH-PERP
+    - BTC-USD
+    - ETH-USD
+  expected_horizon: 4h-24h
+  why_it_might_persist: >
+    Liquidations are mechanical, leverage constraints force rapid deleveraging,
+    and liquidity providers may reduce depth when inventory risk rises. Public
+    funding and open-interest data may still describe positioning pressure rather
+    than immediately arbitrageable mispricing, especially when spot and perp
+    capital are segmented or basis capital is constrained.
+  known_risks:
+    - High funding can persist in spot-led bull markets without immediate downside.
+    - Funding and open-interest data are public, so simple threshold effects may decay quickly.
+    - Exchange-level open interest can be noisy, revised, or inconsistent across venues.
+    - Apparent edge may only be short beta, volatility timing, or bear-regime exposure.
+    - Funding payments, fees, spread, slippage, and liquidation-event latency may consume apparent edge.
+    - Liquidation prints and orderbook depth may be difficult to obtain with reliable point-in-time semantics.
+  duplicate_of: none_known
+  next_owner: QUANT
+  priority: high

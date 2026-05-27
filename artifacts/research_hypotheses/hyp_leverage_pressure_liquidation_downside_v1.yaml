@@ -1,0 +1,67 @@
+ResearchHypothesis:
+  id: hyp_leverage_pressure_liquidation_downside_v1
+  mechanism_note_id: mech_leverage_pressure_liquidation_downside_v1
+  statement: >
+    When BTC or ETH perpetual funding is elevated and rising, open interest is
+    increasing, and spot return or spot volume fails to confirm the perp-led
+    move, future 4h-24h downside tail risk should increase relative to
+    unconditional periods and simpler controls.
+  trigger_condition: >
+    At observation time t, for BTC-PERP or ETH-PERP: funding rate is above a
+    recent-history threshold or positive z-score and has increased over the
+    lookback window; open interest has increased over the same window; perp price,
+    mark/index basis, or perp return indicates leveraged demand; and spot return
+    or spot volume confirmation is weak relative to the perp move.
+  target_symbol: BTC-PERP, ETH-PERP with paired BTC-USD and ETH-USD spot references
+  target_variable: >
+    Forward 4h, 8h, 12h, and 24h downside return distribution, especially 5% and
+    10% forward-return quantiles, max adverse excursion, realized downside range,
+    and conditional liquidation activity when point-in-time liquidation prints are
+    available.
+  horizon: 4h-24h
+  expected_direction: >
+    Flagged leverage-pressure states should have more negative downside quantiles,
+    larger max adverse excursion, more negative skew, or higher liquidation
+    activity than comparable unflagged states. Mean return may be weak or unstable;
+    tail-risk separation is the first target.
+  expected_effect_size: >
+    Minimum useful effect is a stable deterioration in 5% or 10% forward-return
+    quantiles, max adverse excursion, or downside skew that survives simple
+    momentum, volatility, and regime controls. No numeric threshold is accepted
+    until data availability and sampling frequency are fixed.
+  null_hypothesis: >
+    Conditional on recent momentum, realized volatility, market regime, and basic
+    funding/open-interest controls, the combined high-funding/rising-OI/weak-spot
+    state does not change future 4h-24h downside quantiles, max adverse excursion,
+    skew, or liquidation activity relative to comparable periods.
+  minimum_effect_after_cost: >
+    For first-pass research, the condition must at least be strong enough to act
+    as a risk-regime filter after conservative spread, fee, funding-payment, and
+    latency assumptions. A standalone short signal would require stronger evidence:
+    stable tail separation plus plausible net edge versus cash, buy-and-hold,
+    same-exposure, volatility-adjusted, and simple momentum baselines.
+  assumptions:
+    - Funding rate, open interest, perp candles, and spot candles can be reconstructed with point-in-time observed_at semantics.
+    - Exchange-level open interest is sufficiently comparable across historical and live contexts for at least one venue.
+    - Spot confirmation is measured from venues and symbols that are liquid enough to avoid obvious stale-volume artifacts.
+    - The first research pass targets BTC and ETH before long-tail assets because liquidity and data quality should be better.
+    - The relevant effect is distributional tail risk, not necessarily a stable negative average return.
+    - Funding payments, fees, spread, slippage, and latency are treated as constraints before any paper-trading claim.
+  failure_modes:
+    - Spot-led bull markets keep funding high and open interest rising without near-term liquidation.
+    - The condition is just a proxy for bearish momentum, high volatility, or crisis regimes.
+    - Open-interest increases reflect hedged basis positions rather than directional crowded longs.
+    - Exchange-specific data quirks or revisions create false historical signals.
+    - Liquidation data is unavailable, late, revised, or not replayable without lookahead.
+    - The effect exists only in small-cap or illiquid assets where costs and execution dominate.
+    - Simple threshold tuning overfits a few liquidation episodes.
+  falsification_tests:
+    - Compare flagged versus unconditional forward returns at 4h, 8h, 12h, and 24h.
+    - Compare downside 5% and 10% quantiles and max adverse excursion for flagged versus unflagged periods.
+    - Test whether the combined condition beats high-funding-only and rising-open-interest-only controls.
+    - Control for recent spot/perp momentum and realized volatility before attributing effect to leverage pressure.
+    - Split by bull, bear, sideways, high-volatility, and low-volatility regimes.
+    - Verify that signal strength sorts future downside risk monotonically or at least directionally.
+    - Run train/test or walk-forward splits without resetting rolling state at test boundaries.
+    - Apply conservative spread, fee, funding-payment, slippage, and latency assumptions before labeling tradability.
+    - Reject if only one narrow parameter threshold works while nearby thresholds fail.

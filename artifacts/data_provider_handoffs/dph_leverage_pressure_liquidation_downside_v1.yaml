@@ -1,0 +1,85 @@
+DataProviderHandoff:
+  id: dph_leverage_pressure_liquidation_downside_v1
+  created_at: '2026-05-28T21:31:08+08:00'
+  created_by: QUANT
+  hypothesis_id: hyp_leverage_pressure_liquidation_downside_v1
+  source: centralized_exchange_perp_and_spot_market_data_candidate_review
+  source_type: exchange
+  required_fields:
+    - perp_funding_rate.venue
+    - perp_funding_rate.symbol
+    - perp_funding_rate.funding_rate
+    - perp_funding_rate.funding_interval
+    - perp_funding_rate.next_funding_time
+    - perp_funding_rate.previous_funding_time
+    - perp_open_interest.venue
+    - perp_open_interest.symbol
+    - perp_open_interest.open_interest_contracts
+    - perp_open_interest.open_interest_notional
+    - perp_open_interest.contract_size
+    - perp_candle.open
+    - perp_candle.high
+    - perp_candle.low
+    - perp_candle.close
+    - perp_candle.volume
+    - perp_candle.quote_volume
+    - perp_candle.mark_price_close
+    - perp_candle.index_price_close
+    - spot_candle.open
+    - spot_candle.high
+    - spot_candle.low
+    - spot_candle.close
+    - spot_candle.volume
+    - spot_candle.quote_volume
+    - optional_liquidation_print.side
+    - optional_liquidation_print.quantity
+    - optional_liquidation_print.price
+    - optional_liquidation_print.notional
+    - optional_orderbook_liquidity.spread_bps
+    - optional_orderbook_liquidity.depth_10bps_bid
+    - optional_orderbook_liquidity.depth_10bps_ask
+  subjects:
+    - BTC-PERP
+    - ETH-PERP
+    - BTC-USD or BTC-USDT spot reference with explicit venue mapping
+    - ETH-USD or ETH-USDT spot reference with explicit venue mapping
+  observation_kinds:
+    - perp_funding_rate
+    - perp_open_interest
+    - perp_candle
+    - spot_candle
+    - perp_spot_basis
+    - liquidation_print_optional
+    - orderbook_liquidity_optional
+  expected_latency: >
+    First-pass historical research may use 1m-5m candle/OI granularity if observed_at semantics are reconstructable. Live/replay target latency is exchange receive time plus normal ingestion latency: <=30s for candles after close, <=60s for funding/OI snapshots where APIs permit, and <=5m maximum for optional liquidation attribution.
+  timestamp_semantics:
+    occurred_at_rule: >
+      occurred_at is the exchange measurement time: candle interval end for closed candles, exchange snapshot timestamp for open interest/orderbook, funding interval or quoted funding timestamp for funding, and exchange event timestamp for liquidation prints.
+    observed_at_rule: >
+      observed_at is when the trading_system process could have known the observation: live exchange REST/API receive_time or stream receive_time. Historical data must approximate this without using later revisions or publication/backfill time as if it were available earlier.
+    timezone: UTC
+  missing_data_policy_needed: >
+    Mandatory first-pass inputs are funding, open interest, perp candles, and spot candles. If any mandatory input is missing or stale for a timestamp, Quant should skip that event rather than impute. Optional liquidation/orderbook observations should be marked unavailable and used only for attribution when point-in-time feasible.
+  duplicate_policy_needed: >
+    Deduplicate by source, venue, symbol, kind, occurred_at, and payload version. If multiple observations share occurred_at but arrive at different observed_at times, preserve the latest as a revision with explicit revision metadata rather than overwriting silently.
+  late_arrival_policy_needed: >
+    Late observations must enter replay only at their observed_at. They may affect future features but must not retroactively change already-emitted research events unless the whole run is explicitly rerun with a new artifact id/version.
+  revision_policy_needed: >
+    DataProvider Developer must identify whether the chosen venue revises historical funding, open-interest, candle, liquidation, or orderbook records. If revisions exist, store observed revision time or choose a source snapshot that preserves point-in-time history.
+  replay_requirement: >
+    Provide JSONL or typed Observation fixtures for at least BTC and ETH covering funding, OI, perp candles, and spot candles with both occurred_at and observed_at. Replay must support filtering visible observations by observed_at <= current_time. Forward-return labels must use prices after signal time, not the candle close used to compute the signal.
+  minimum_fixture: >
+    At minimum, deliver a 14-day BTC and ETH fixture with 1m or 5m perp/spot candles, funding snapshots, and OI snapshots from one selected primary venue. Include at least one period with elevated funding, rising OI, and weak spot confirmation if available. If optional liquidation data is feasible, include the same time range as a separate optional fixture.
+  data_quality_risks:
+    - Venue selection may dominate results; Binance, Bybit, OKX, or Deribit have different contracts, quote currencies, historical coverage, and API semantics.
+    - Funding quoted rates and settled funding payments can be confused; they must be represented separately or clearly labeled.
+    - OI units may be contracts, coin, or notional; normalization must be explicit and replay-stable.
+    - Historical OI and liquidation endpoints may be backfilled or revised, creating lookahead if used naively.
+    - Spot reference venue mismatch can make weak spot confirmation a venue artifact rather than a market mechanism.
+    - Orderbook data may be unavailable or too coarse historically; do not use coarse depth as if it were live top-of-book liquidity.
+    - Survivorship/venue changes can affect symbol continuity for BTC-PERP and ETH-PERP contracts.
+  quant_dependency: >
+    Quant depends on DataProvider Developer to select the primary venue/source, confirm point-in-time timestamp semantics, normalize OI notional units, define symbol mapping between perp and spot pairs, and provide replayable fixtures before signal implementation or serious event-study backtesting.
+  requested_review: >
+    Please review which exchange source can support point-in-time funding, open interest, perp candles, spot candles, and optional liquidation/orderbook attribution for BTC and ETH. Answer whether each observation kind is feasible historically and live, how observed_at and occurred_at will be populated, what revisions/backfills exist, and what minimum fixture can be delivered for Quant's first event-study pass.

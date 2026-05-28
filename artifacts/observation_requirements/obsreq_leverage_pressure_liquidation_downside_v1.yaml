@@ -1,0 +1,132 @@
+ObservationRequirements:
+  id: obsreq_leverage_pressure_liquidation_downside_v1
+  hypothesis_id: hyp_leverage_pressure_liquidation_downside_v1
+  required_observations:
+    - kind: perp_funding_rate
+      subject: BTC-PERP, ETH-PERP
+      required_fields:
+        - venue
+        - symbol
+        - funding_rate
+        - funding_interval
+        - next_funding_time
+        - previous_funding_time
+        - mark_price_reference
+        - index_price_reference
+      lookback_window: 72h rolling history for z-score/percentile and 24h change features
+      observed_at_rule: exchange_api_receive_time for live; historical replay must use the timestamp at which the funding quote/rate would have been available from the venue API, not later dataset publication time
+      occurred_at_rule: funding interval boundary or exchange funding timestamp; must distinguish quoted next funding rate from settled funding payment
+      stale_tolerance: 15m for quoted funding snapshots; settled funding observations may be used only after their observed_at is available
+      required_for_signal: true
+    - kind: perp_open_interest
+      subject: BTC-PERP, ETH-PERP
+      required_fields:
+        - venue
+        - symbol
+        - open_interest_contracts
+        - open_interest_notional
+        - contract_size
+        - quote_currency
+      lookback_window: 72h rolling history with 1h or finer sampling preferred; minimum 24h for first-pass event study
+      observed_at_rule: exchange_api_receive_time for live snapshots; historical replay must preserve when each OI snapshot was observable
+      occurred_at_rule: exchange snapshot timestamp representing the measurement time of open interest
+      stale_tolerance: 10m for 1m-5m snapshots; 30m maximum if only coarse historical sampling is available and this limitation is flagged
+      required_for_signal: true
+    - kind: perp_candle
+      subject: BTC-PERP, ETH-PERP
+      required_fields:
+        - venue
+        - symbol
+        - granularity
+        - open
+        - high
+        - low
+        - close
+        - volume
+        - quote_volume
+        - mark_price_close
+        - index_price_close
+      lookback_window: 72h rolling history; 1m or 5m candles preferred, 15m acceptable for initial feasibility only
+      observed_at_rule: candle_close_time plus ingestion latency; an incomplete candle must not be used as a closed candle
+      occurred_at_rule: candle interval start/end time from exchange; close value occurs at interval end
+      stale_tolerance: 2x candle granularity plus 30s ingestion allowance
+      required_for_signal: true
+    - kind: spot_candle
+      subject: BTC-USD, ETH-USD or venue-native BTC-USDT, ETH-USDT spot pairs mapped explicitly
+      required_fields:
+        - venue
+        - symbol
+        - granularity
+        - open
+        - high
+        - low
+        - close
+        - volume
+        - quote_volume
+      lookback_window: 72h rolling history matching perp candle granularity where possible
+      observed_at_rule: candle_close_time plus ingestion latency; incomplete spot candles must not be used as closed candles
+      occurred_at_rule: candle interval start/end time from exchange; close and final volume occur at interval end
+      stale_tolerance: 2x candle granularity plus 30s ingestion allowance
+      required_for_signal: true
+    - kind: perp_spot_basis
+      subject: BTC-PERP/BTC-SPOT, ETH-PERP/ETH-SPOT
+      required_fields:
+        - venue
+        - perp_symbol
+        - spot_symbol
+        - mark_price
+        - index_price
+        - spot_mid_or_close
+        - basis_absolute
+        - basis_bps
+      lookback_window: 72h rolling history; can be derived from point-in-time perp and spot observations if raw basis is unavailable
+      observed_at_rule: max observed_at of the underlying perp mark/index and spot price observations used to compute basis
+      occurred_at_rule: max occurred_at of the underlying perp and spot observations used to compute basis
+      stale_tolerance: inherits the stricter of perp and spot price stale tolerances
+      required_for_signal: false
+    - kind: liquidation_print
+      subject: BTC-PERP, ETH-PERP
+      required_fields:
+        - venue
+        - symbol
+        - side
+        - quantity
+        - price
+        - notional
+        - liquidation_time
+      lookback_window: 24h forward attribution after signal time; optional for first-pass trigger and required only for liquidation-activity attribution if point-in-time data is feasible
+      observed_at_rule: exchange_stream_receive_time or historical event availability time; do not use backfilled liquidation labels before they would have been visible
+      occurred_at_rule: exchange liquidation event timestamp
+      stale_tolerance: 5m for attribution; unavailable liquidation data must not block first-pass downside-return event study
+      required_for_signal: false
+    - kind: orderbook_liquidity
+      subject: BTC-PERP, ETH-PERP, BTC-USD, ETH-USD
+      required_fields:
+        - venue
+        - symbol
+        - bid_price
+        - ask_price
+        - bid_size_top
+        - ask_size_top
+        - depth_10bps_bid
+        - depth_10bps_ask
+        - spread_bps
+      lookback_window: 24h rolling history around flagged states; optional for first-pass feasibility and useful for liquidity-withdrawal attribution
+      observed_at_rule: exchange_stream_receive_time or REST snapshot receive_time with clear snapshot timestamp
+      occurred_at_rule: exchange book snapshot timestamp if provided, otherwise receive_time with limitation documented
+      stale_tolerance: 30s for live/replay; if only historical coarse snapshots exist, use for attribution only, not signal trigger
+      required_for_signal: false
+  missing_data_policy: >
+    Funding, open interest, perp candles, and spot candles are mandatory for the first-pass leverage-pressure state. If any mandatory kind is missing inside the required lookback, emit no signal/research event for that timestamp. Optional liquidation and orderbook data may be absent; absence must be recorded and may limit attribution but must not be silently imputed.
+  late_arrival_policy: >
+    Replay must process observations by observed_at, not occurred_at. Late-arriving observations may update future states only after their observed_at. They must not revise prior signal events or forward-return labels except through an explicitly versioned rerun.
+  replay_requirement: >
+    Event study replay must guarantee that at research timestamp t, feature construction only uses observations with observed_at <= t. Entry/forward-return reference prices must use the first tradable price strictly after signal timestamp t, never the same candle close that created the signal.
+  data_quality_risks:
+    - Funding APIs may mix quoted next funding rates and settled funding payments; these have different occurred_at and observed_at semantics.
+    - Historical open-interest snapshots may be sparse, revised, venue-specific, or denominated in contracts rather than notional.
+    - Perp and spot symbols may use different quote currencies, index construction, and venue liquidity; mapping must be explicit.
+    - Spot volume confirmation can be distorted by venue selection, stablecoin quote pair choice, wash volume, or aggregation lag.
+    - Liquidation prints may be incomplete, delayed, backfilled, or unavailable historically with point-in-time semantics.
+    - Orderbook depth snapshots are high frequency and may not be available historically; coarse snapshots should not be treated as live-tradable liquidity.
+    - Candle close timing can introduce lookahead if the same closed candle is used both for signal generation and assumed execution.

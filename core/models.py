@@ -29,6 +29,10 @@ class ObservationKind(str, Enum):
     MESSAGE = "message"
     MACRO = "macro"
     ORDERBOOK = "orderbook"
+    PERP_FUNDING_RATE = "perp_funding_rate"
+    PERP_OPEN_INTEREST = "perp_open_interest"
+    PERP_MARK_PRICE = "perp_mark_price"
+    PERP_SPOT_BASIS = "perp_spot_basis"
 
 
 def utc_now() -> datetime:
@@ -84,6 +88,31 @@ class MacroPayload:
     forecast: float | None = None
     previous: float | None = None
     unit: str | None = None
+
+
+@dataclass(frozen=True)
+class FundingRatePayload:
+    funding_rate: float
+    funding_rate_raw: str
+    funding_type: str = "settled"
+    funding_interval: str | None = None
+
+
+@dataclass(frozen=True)
+class OpenInterestPayload:
+    open_interest_raw: str
+    open_interest_unit: str
+    open_interest_notional_usdt: float | None = None
+    normalization_price: float | None = None
+    normalization_source: str | None = None
+
+
+@dataclass(frozen=True)
+class BasisPayload:
+    basis_bps: float
+    perp_price: float
+    spot_price: float
+    basis_type: str
 
 
 @dataclass(frozen=True)

@@ -7,7 +7,15 @@ from pathlib import Path
 from typing import Any, Iterable
 
 from core.data_provider import DataProvider
-from core.models import CandlePayload, Observation, ObservationKind, PricePayload
+from core.models import (
+    BasisPayload,
+    CandlePayload,
+    FundingRatePayload,
+    Observation,
+    ObservationKind,
+    OpenInterestPayload,
+    PricePayload,
+)
 
 
 class JsonLinesTradeProvider(DataProvider):
@@ -199,8 +207,11 @@ class JsonLinesObservationProvider(DataProvider):
         )
 
     @staticmethod
-    def _parse_payload(kind: ObservationKind, payload: dict[str, Any]) -> CandlePayload | PricePayload | None:
-        if kind == ObservationKind.CANDLE:
+    def _parse_payload(
+        kind: ObservationKind,
+        payload: dict[str, Any],
+    ) -> CandlePayload | PricePayload | FundingRatePayload | OpenInterestPayload | BasisPayload | None:
+        if kind in (ObservationKind.CANDLE, ObservationKind.PERP_MARK_PRICE):
             return CandlePayload(
                 open=float(payload["open"]),
                 high=float(payload["high"]),
@@ -215,6 +226,36 @@ class JsonLinesObservationProvider(DataProvider):
                 ask=float(payload["ask"]) if payload.get("ask") is not None else None,
                 last=float(payload["last"]) if payload.get("last") is not None else None,
                 volume=float(payload["volume"]) if payload.get("volume") is not None else None,
+            )
+        if kind == ObservationKind.PERP_FUNDING_RATE:
+            return FundingRatePayload(
+                funding_rate=float(payload["funding_rate"]),
+                funding_rate_raw=str(payload.get("funding_rate_raw", payload["funding_rate"])),
+                funding_type=str(payload.get("funding_type", "settled")),
+                funding_interval=payload.get("funding_interval"),
+            )
+        if kind == ObservationKind.PERP_OPEN_INTEREST:
+            return OpenInterestPayload(
+                open_interest_raw=str(payload["open_interest_raw"]),
+                open_interest_unit=str(payload["open_interest_unit"]),
+                open_interest_notional_usdt=(
+                    float(payload["open_interest_notional_usdt"])
+                    if payload.get("open_interest_notional_usdt") is not None
+                    else None
+                ),
+                normalization_price=(
+                    float(payload["normalization_price"])
+                    if payload.get("normalization_price") is not None
+                    else None
+                ),
+                normalization_source=payload.get("normalization_source"),
+            )
+        if kind == ObservationKind.PERP_SPOT_BASIS:
+            return BasisPayload(
+                basis_bps=float(payload["basis_bps"]),
+                perp_price=float(payload["perp_price"]),
+                spot_price=float(payload["spot_price"]),
+                basis_type=str(payload["basis_type"]),
             )
         return None
 

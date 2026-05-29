@@ -1,0 +1,44 @@
+ResearchReport:
+  id: research_report_leverage_pressure_short_v1
+  hypothesis_id: hypothesis_leverage_pressure_liquidation_downside_v1
+  signal_contract_id: signal_contract_leverage_pressure_short_v1
+  summary: "First-pass replay of the leverage-pressure SHORT signal on a 30d Bybit BTCUSDT fixture emitted zero v1 SignalEvents. The mechanism is not rejected globally, but the current contract fails the signal-frequency sanity gate and should be revised before serious backtesting or Trader handoff."
+  data_scope: "BTCUSDT Bybit public REST fixture, 2026-04-29T15:30:30Z through 2026-05-29T15:26:00Z, 43,287 normalized observations, 8,639 linear-perp 5m candles."
+  methodology: "Exported conservative point-in-time Observation JSONL with simulated historical observed_at, replayed the v1 LeveragePressureShortSignal over a 24h rolling window, sampled forward SHORT returns at 4h/8h/24h when events were emitted, and compared frequency/results against cash, buy-and-hold long, and always-short directional baselines."
+  completed_checks:
+    - "Provider export completed for 30d BTCUSDT fixture."
+    - "Replay used Observation objects and observed_at ordering."
+    - "Signal frequency sanity check completed: zero events."
+    - "Threshold diagnostics completed for funding, basis, and open-interest change."
+  partial_checks:
+    - "Benchmark comparison recorded only as baseline context because there were no strategy events."
+    - "Regime attribution recorded as zero-event failure attribution."
+  not_done_checks:
+    - "Forward-return edge estimation."
+    - "Strength/confidence sorting."
+    - "Train/test split and walk-forward validation."
+    - "Cost/slippage sensitivity."
+    - "Trader handoff."
+  key_results:
+    signal_count: 0
+    max_settled_funding_rate: 0.0001
+    contract_min_funding_rate: 0.0003
+    max_perp_spot_basis_bps: -1.91916677
+    contract_min_basis_bps: 10.0
+    rolling_24h_open_interest_change_above_5pct_count: 1166
+    buy_and_hold_long_total_return: -0.03487821
+    always_short_total_return: 0.03487821
+  benchmark_comparison: "The signal was flat, so it behaved like cash. Always-short outperformed over this down month, but that does not validate this contract because the signal never entered exposure."
+  robustness_summary: "First robustness gate failed: v1 thresholds produced no events. Do not tune around this result without first revisiting mechanism-to-observation mapping."
+  regime_summary: "No event-level regime attribution possible. The sampled month appears incompatible with the contract's high funding plus positive basis premise."
+  cost_sensitivity: "Not applicable with zero events."
+  failure_modes:
+    - "Bybit BTCUSDT perp can trade at a small discount while leverage pressure still exists elsewhere or in other instruments."
+    - "Settled funding history may miss decision-time predicted funding pressure."
+    - "The positive basis gate may be too strict or wrong for this venue/instrument mapping."
+    - "A broad market down month can make always-short look good without proving structural alpha."
+  conclusion_grade: "Research Only / Needs Revision"
+  recommended_next_owner: "QUANT"
+  required_reviews:
+    - "Quant should revise the contract only after deciding whether to use predicted funding, cross-venue basis, or a different basis sign/normalization rule."
+    - "DataProvider Developer review is needed if the next version requires predicted funding, orderbook, cross-exchange basis, or archived receive-time semantics."

@@ -1,0 +1,36 @@
+RobustnessReview:
+  id: robustness_leverage_pressure_short_v1
+  research_result_id: signal_research_leverage_pressure_short_v1
+  parameter_grid:
+    contract_v1:
+      min_funding_rate: 0.0003
+      min_open_interest_change_pct: 0.05
+      min_basis_bps: 10.0
+      emitted_events: 0
+    observed_fixture_threshold_diagnostics:
+      max_settled_funding_rate: 0.0001
+      funding_observations_at_or_above_contract_threshold: 0
+      max_perp_spot_basis_bps: -1.91916677
+      basis_observations_at_or_above_contract_threshold: 0
+      rolling_24h_open_interest_change_above_contract_threshold: 1166
+      interpretation: "Open-interest pressure existed at times, but funding and positive basis gates did not confirm."
+  train_test:
+    split_rule: "Not run because the v1 contract emitted zero events; a train/test split would be empty on both sides."
+    train_result: "insufficient_events"
+    test_result: "insufficient_events"
+    continuous_state: true
+  walk_forward:
+    windows:
+      - "not_run_zero_event_contract"
+    selected_params:
+      - "not_selected"
+    test_segments:
+      - "not_run_zero_event_contract"
+    aggregate_result: "insufficient_events"
+  parameter_stability:
+    top_params:
+      - "No candidate parameter set promoted; this review did not tune around the failed contract."
+    neighborhood_stability: "Not assessed; first gate failed on signal frequency."
+    overfit_warning: "High. Any next attempt must define revised thresholds from mechanism/source semantics before optimizing returns."
+  cost_sensitivity: "Not computed; no emitted events and no gross edge estimate."
+  conclusion: "needs_revision: revise the contract or source interpretation before serious backtest. Specifically review whether positive perp-spot basis is the right gate for Bybit BTCUSDT, and whether settled funding history can represent decision-time pressure."

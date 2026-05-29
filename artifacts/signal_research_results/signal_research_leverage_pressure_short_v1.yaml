@@ -1,0 +1,35 @@
+SignalResearchResult:
+  id: signal_research_leverage_pressure_short_v1
+  hypothesis_id: hypothesis_leverage_pressure_liquidation_downside_v1
+  signal_contract_id: signal_contract_leverage_pressure_short_v1
+  data_scope: "BTCUSDT Bybit public REST fixture, 2026-04-29T15:30:30Z through 2026-05-29T15:26:00Z, 43,287 normalized observations, 8,639 linear-perp 5m candles. Historical observed_at is simulated publication availability, not archived receive time."
+  signal_count: "0 contract-threshold events over the 30d replay window"
+  horizons:
+    - 4h
+    - 8h
+    - 24h
+  forward_return_summary:
+    4h:
+      count: 0
+      interpretation: "No forward-return sample because the contract thresholds never fired."
+    8h:
+      count: 0
+      interpretation: "No forward-return sample because the contract thresholds never fired."
+    24h:
+      count: 0
+      interpretation: "No forward-return sample because the contract thresholds never fired."
+  strength_bucket_analysis:
+    status: insufficient_events
+    interpretation: "Cannot test strength sorting with zero emitted SignalEvents."
+  confidence_bucket_analysis:
+    status: insufficient_events
+    interpretation: "Cannot test confidence sorting with zero emitted SignalEvents."
+  gross_edge: "Not estimable from this fixture because the signal emitted zero events."
+  cost_assumption: "No execution cost model applied; absence of events blocks cost-adjusted edge estimation."
+  net_edge_estimate: "Not estimable; no emitted events."
+  preliminary_conclusion: "needs_revision: the mechanism remains plausible, but the v1 contract thresholds are too restrictive or mismatched to this 30d Bybit BTCUSDT sample."
+  warnings:
+    - "Funding history is settled funding; live quoted/predicted funding at decision time is not reconstructed."
+    - "Historical observed_at values are conservative simulated availability timestamps, not archived receive timestamps."
+    - "Bybit BTCUSDT perp-spot basis was negative throughout this fixture, so the positive-premium requirement blocked all events."
+    - "This is signal-behavior evidence only, not Trader sizing or portfolio guidance."

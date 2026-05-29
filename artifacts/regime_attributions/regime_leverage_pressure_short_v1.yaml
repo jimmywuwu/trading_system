@@ -1,0 +1,19 @@
+RegimeAttribution:
+  id: regime_leverage_pressure_short_v1
+  research_result_id: signal_research_leverage_pressure_short_v1
+  regime_definition: "Regime attribution was attempted using 24h trend and median 1h absolute return on BTCUSDT 5m perp closes, but no SignalEvents were emitted."
+  regimes:
+    - name: all_regimes_zero_signal
+      bars: "8639 5m perp candles"
+      signal_count: "0"
+      strategy_return: "0.00000000 before costs because no signal exposure was taken"
+      benchmark_return: "buy_and_hold_long=-0.03487821; always_short=0.03487821"
+      max_drawdown: "not_applicable_zero_exposure"
+      exposure: "0% signal exposure"
+      trades: "0"
+      fees: "0"
+      notes: "No event-level regime attribution is possible until the signal emits enough events."
+  failure_regimes:
+    - "Positive-premium gate failed across the whole fixture: max observed perp-spot basis was -1.91916677 bps."
+    - "High-funding gate failed across the whole fixture: max settled funding was 0.0001 versus contract threshold 0.0003."
+  trader_risk_implications: "No Trader handoff should be created from this evidence. The current signal would be inactive in the sampled regime; any trading discussion before contract revision would be role leakage disguised as decisiveness."

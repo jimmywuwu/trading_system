@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import json
+import subprocess
+import sys
 import tempfile
 import unittest
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from core.models import BasisPayload, FundingRatePayload, ObservationKind, OpenInterestPayload
@@ -90,6 +92,9 @@ class BybitLeveragePressureProviderTest(unittest.TestCase):
         self.assertEqual(oi.payload.normalization_source, "bybit_mark_price_kline_close")
         self.assertEqual(oi.payload.open_interest_notional_usdt, 1040.0)
         self.assertEqual(oi.metadata["replay_visibility"], "conservative_simulated_observed_at")
+        self.assertEqual(oi.metadata["coverage_status"], "incomplete")
+        self.assertEqual(oi.metadata["coverage_expected_interval"], "5m")
+        self.assertIn("coverage_warning", oi.metadata)
 
         self.assertIn(ObservationKind.PERP_SPOT_BASIS, by_kind)
         basis = by_kind[ObservationKind.PERP_SPOT_BASIS]
@@ -108,6 +113,70 @@ class BybitLeveragePressureProviderTest(unittest.TestCase):
             self.assertIn(ObservationKind.PERP_FUNDING_RATE, round_trip_kinds)
             self.assertIn(ObservationKind.PERP_OPEN_INTEREST, round_trip_kinds)
             self.assertIn(ObservationKind.PERP_SPOT_BASIS, round_trip_kinds)
+
+    def test_open_interest_uses_sub_cap_windows_and_records_complete_coverage(self) -> None:
+        requested_urls: list[str] = []
+
+        def fake_http_get(url: str, headers: dict[str, str]) -> dict:
+            del headers
+            requested_urls.append(url)
+            if "/v5/market/open-interest" not in url:
+                return {"retCode": 0, "retMsg": "OK", "result": {"list": []}}
+            if "startTime=1780000000000" in url:
+                rows = [
+                    {"openInterest": "10", "timestamp": "1780000000000"},
+                    {"openInterest": "11", "timestamp": "1780000300000"},
+                ]
+            else:
+                rows = [
+                    {"openInterest": "12", "timestamp": "1780000600000"},
+                    {"openInterest": "13", "timestamp": "1780000900000"},
+                ]
+            return {"retCode": 0, "retMsg": "OK", "result": {"list": rows}}
+
+        provider = BybitLeveragePressureProvider(http_get=fake_http_get)
+        provider.open_interest_window = timedelta(minutes=10)
+        start = datetime.fromtimestamp(1780000000, tz=timezone.utc)
+        end = start + timedelta(minutes=20)
+
+        observations = provider.fetch_open_interest("BTCUSDT", start, end)
+
+        self.assertEqual(len(observations), 4)
+        self.assertEqual(len([url for url in requested_urls if "/v5/market/open-interest" in url]), 2)
+        self.assertTrue(all("limit=200" in url for url in requested_urls if "/v5/market/open-interest" in url))
+        self.assertEqual(observations[0].metadata["coverage_status"], "complete")
+        self.assertEqual(observations[0].metadata["coverage_expected_points"], 4)
+        self.assertEqual(observations[0].metadata["coverage_observed_points"], 4)
+        self.assertEqual(len(observations[0].metadata["coverage_request_windows"]), 2)
+
+    def test_open_interest_raises_when_endpoint_cap_is_reached(self) -> None:
+        rows = [
+            {"openInterest": str(index), "timestamp": str(1780000000000 + index * 300_000)}
+            for index in range(BybitLeveragePressureProvider.open_interest_limit)
+        ]
+
+        def fake_http_get(url: str, headers: dict[str, str]) -> dict:
+            del url, headers
+            return {"retCode": 0, "retMsg": "OK", "result": {"list": rows}}
+
+        provider = BybitLeveragePressureProvider(http_get=fake_http_get)
+        start = datetime.fromtimestamp(1780000000, tz=timezone.utc)
+        end = start + timedelta(hours=1)
+
+        with self.assertRaisesRegex(RuntimeError, "open-interest response reached the endpoint limit"):
+            provider.fetch_open_interest("BTCUSDT", start, end)
+
+    def test_export_script_can_run_directly_from_repo_root(self) -> None:
+        result = subprocess.run(
+            [sys.executable, "scripts/export_bybit_leverage_fixture.py", "--help"],
+            cwd=Path(__file__).resolve().parents[1],
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("Export a conservative Bybit leverage-pressure", result.stdout)
 
 
 if __name__ == "__main__":

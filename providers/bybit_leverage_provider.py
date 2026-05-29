@@ -35,6 +35,9 @@ class BybitLeveragePressureProvider(DataProvider):
     supported_symbols = ("BTCUSDT", "ETHUSDT")
     default_interval = "5"
     max_limit = 1000
+    open_interest_limit = 200
+    open_interest_window = timedelta(hours=12)
+    open_interest_interval = timedelta(minutes=5)
 
     _KLINE_ENDPOINT = "/v5/market/kline"
     _MARK_PRICE_KLINE_ENDPOINT = "/v5/market/mark-price-kline"
@@ -165,8 +168,8 @@ class BybitLeveragePressureProvider(DataProvider):
         )
 
     def fetch_open_interest(self, symbol: str, start: datetime, end: datetime) -> list[Observation[OpenInterestPayload]]:
-        rows: list[dict[str, Any]] = []
-        for payload in self._iter_windowed_payloads(
+        window_rows: list[tuple[datetime, datetime, list[dict[str, Any]]]] = []
+        for window_start, window_end, payload in self._iter_windowed_payload_windows(
             self._OPEN_INTEREST_ENDPOINT,
             {
                 "category": "linear",
@@ -177,39 +180,51 @@ class BybitLeveragePressureProvider(DataProvider):
             end,
             start_param="startTime",
             end_param="endTime",
+            window=self.open_interest_window,
+            limit=self.open_interest_limit,
         ):
-            rows.extend(payload.get("result", {}).get("list", []))
-
-        observations = []
-        for row in rows:
-            occurred_at = self._from_millis(row["timestamp"])
-            if not start <= occurred_at < end:
-                continue
-            raw_payload_hash = self._hash_payload(row)
-            observations.append(
-                Observation(
-                    observed_at=occurred_at + self.open_interest_observed_lag,
-                    occurred_at=occurred_at,
-                    symbol=symbol,
-                    source=self.source,
-                    kind=ObservationKind.PERP_OPEN_INTEREST,
-                    payload=OpenInterestPayload(
-                        open_interest_raw=str(row["openInterest"]),
-                        open_interest_unit="exchange_native_linear_contract_quantity",
-                        open_interest_notional_usdt=None,
-                        normalization_price=None,
-                        normalization_source=None,
-                    ),
-                    metadata=self._metadata(
-                        endpoint=self._OPEN_INTEREST_ENDPOINT,
-                        market_type="linear_perp",
-                        source_category="linear",
-                        raw_payload=row,
-                        raw_payload_hash=raw_payload_hash,
-                        visibility_note="historical observed_at is simulated as timestamp + 60s; not archived receive time",
-                    ),
+            rows = payload.get("result", {}).get("list", [])
+            if len(rows) >= self.open_interest_limit:
+                raise RuntimeError(
+                    "Bybit open-interest response reached the endpoint limit; "
+                    f"requested window {window_start.isoformat()} -> {window_end.isoformat()} "
+                    "may be truncated. Reduce open_interest_window before replay export."
                 )
-            )
+            window_rows.append((window_start, window_end, rows))
+
+        coverage = self._open_interest_coverage_metadata(window_rows, start, end)
+        observations = []
+        for _window_start, _window_end, rows in window_rows:
+            for row in rows:
+                occurred_at = self._from_millis(row["timestamp"])
+                if not start <= occurred_at < end:
+                    continue
+                raw_payload_hash = self._hash_payload(row)
+                observations.append(
+                    Observation(
+                        observed_at=occurred_at + self.open_interest_observed_lag,
+                        occurred_at=occurred_at,
+                        symbol=symbol,
+                        source=self.source,
+                        kind=ObservationKind.PERP_OPEN_INTEREST,
+                        payload=OpenInterestPayload(
+                            open_interest_raw=str(row["openInterest"]),
+                            open_interest_unit="exchange_native_linear_contract_quantity",
+                            open_interest_notional_usdt=None,
+                            normalization_price=None,
+                            normalization_source=None,
+                        ),
+                        metadata=self._metadata(
+                            endpoint=self._OPEN_INTEREST_ENDPOINT,
+                            market_type="linear_perp",
+                            source_category="linear",
+                            raw_payload=row,
+                            raw_payload_hash=raw_payload_hash,
+                            visibility_note="historical observed_at is simulated as timestamp + 60s; not archived receive time",
+                            extra=coverage,
+                        ),
+                    )
+                )
         return self._dedupe(observations)
 
     def fetch_funding_rates(self, symbol: str, start: datetime, end: datetime) -> list[Observation[FundingRatePayload]]:
@@ -436,6 +451,49 @@ class BybitLeveragePressureProvider(DataProvider):
                 )
         return self._dedupe(observations)
 
+    def _open_interest_coverage_metadata(
+        self,
+        window_rows: Iterable[tuple[datetime, datetime, list[dict[str, Any]]]],
+        start: datetime,
+        end: datetime,
+    ) -> dict[str, Any]:
+        expected_interval_seconds = int(self.open_interest_interval.total_seconds())
+        expected_points = max(0, int((end - start).total_seconds() // expected_interval_seconds))
+        timestamps = sorted(
+            self._from_millis(row["timestamp"])
+            for _window_start, _window_end, rows in window_rows
+            for row in rows
+            if start <= self._from_millis(row["timestamp"]) < end
+        )
+        request_windows = [
+            {
+                "start": window_start.isoformat().replace("+00:00", "Z"),
+                "end": window_end.isoformat().replace("+00:00", "Z"),
+                "row_count": len(rows),
+            }
+            for window_start, window_end, rows in window_rows
+        ]
+        missing_points = max(0, expected_points - len(set(timestamps)))
+        coverage_status = "complete" if missing_points == 0 else "incomplete"
+        metadata: dict[str, Any] = {
+            "coverage_status": coverage_status,
+            "coverage_expected_interval": "5m",
+            "coverage_expected_points": expected_points,
+            "coverage_observed_points": len(set(timestamps)),
+            "coverage_missing_points": missing_points,
+            "coverage_request_windows": request_windows,
+            "coverage_policy": "raise_on_endpoint_cap; annotate_gap_count",
+        }
+        if timestamps:
+            metadata["coverage_first_occurred_at"] = timestamps[0].isoformat().replace("+00:00", "Z")
+            metadata["coverage_last_occurred_at"] = timestamps[-1].isoformat().replace("+00:00", "Z")
+        if coverage_status == "incomplete":
+            metadata["coverage_warning"] = (
+                "Open-interest rows do not cover every expected 5m slot in the requested range; "
+                "Quant replay should treat this fixture as incomplete for rolling OI features."
+            )
+        return metadata
+
     def _iter_windowed_payloads(
         self,
         endpoint: str,
@@ -445,20 +503,45 @@ class BybitLeveragePressureProvider(DataProvider):
         start_param: str,
         end_param: str,
         window: timedelta = timedelta(days=2),
+        limit: int | None = None,
     ) -> Iterable[dict[str, Any]]:
+        for _window_start, _window_end, payload in self._iter_windowed_payload_windows(
+            endpoint,
+            base_params,
+            start,
+            end,
+            start_param,
+            end_param,
+            window=window,
+            limit=limit,
+        ):
+            yield payload
+
+    def _iter_windowed_payload_windows(
+        self,
+        endpoint: str,
+        base_params: dict[str, str],
+        start: datetime,
+        end: datetime,
+        start_param: str,
+        end_param: str,
+        window: timedelta = timedelta(days=2),
+        limit: int | None = None,
+    ) -> Iterable[tuple[datetime, datetime, dict[str, Any]]]:
         current = self._as_utc(start)
         end = self._as_utc(end)
+        request_limit = limit or self.max_limit
         while current < end:
             window_end = min(current + window, end)
             params = dict(base_params)
             params[start_param] = str(int(current.timestamp() * 1000))
             params[end_param] = str(int(window_end.timestamp() * 1000))
-            params["limit"] = str(self.max_limit)
+            params["limit"] = str(request_limit)
             payload = self._request(endpoint, params)
             ret_code = payload.get("retCode")
             if ret_code != 0:
                 raise RuntimeError(f"Bybit request failed for {endpoint}: {ret_code} {payload.get('retMsg')}")
-            yield payload
+            yield current, window_end, payload
             current = window_end
             self._delay()
 

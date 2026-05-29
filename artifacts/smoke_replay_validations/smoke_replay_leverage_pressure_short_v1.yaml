@@ -1,0 +1,34 @@
+SmokeReplayValidation:
+  id: smoke_replay_leverage_pressure_short_v1
+  created_at: '2026-05-29T15:14:34Z'
+  created_by: QUANT
+  created_by_agent: JAQUAN
+  signal_contract_id: signal_contract_leverage_pressure_short_v1
+  signal_name: leverage_pressure_short
+  fixture: synthetic unit-test observations plus Bybit fixture JSONL round-trip validated in PR #7
+  tests_run:
+    - python3 -m pytest tests/test_leverage_pressure_signal.py -q
+    - python3 -m pytest tests/test_bybit_leverage_provider.py -q
+    - python3 -m pytest -q
+  passed: true
+  failures:
+    - none
+  timestamp_check: >
+    Unit coverage asserts emitted SignalEvent.timestamp equals the maximum
+    observed_at of observations used by the signal. Provider tests and PR #7
+    live smoke verified observed_at is never before occurred_at for the Bybit
+    fixture path.
+  lookahead_check: >
+    The minimal signal consumes only Observation objects supplied to generate().
+    It uses observed_at ordering and does not call raw provider APIs or access
+    future observations outside the replay slice. Future backtest harnesses must
+    still slice replay inputs by current replay time before calling generate().
+  determinism_check: >
+    Unit coverage asserts deterministic output when the same observations are
+    replayed in reversed input order. The implementation sorts OI history by
+    occurred_at/observed_at and selects latest funding/basis by observed_at.
+  notes: >
+    This is a smoke/replay validation for contract semantics and minimal signal
+    behavior, not alpha evidence. It deliberately avoids sizing and portfolio
+    decisions. The next Quant gate is a research backtest with benchmark,
+    regime, cost, and parameter-stability checks before any Trader handoff.

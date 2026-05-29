@@ -1,0 +1,106 @@
+SignalContract:
+  id: signal_contract_leverage_pressure_short_v1
+  created_at: '2026-05-29T15:14:34Z'
+  created_by: QUANT
+  created_by_agent: JAQUAN
+  signal_name: leverage_pressure_short
+  hypothesis_id: idea_leverage_pressure_liquidation_downside_v1
+  mechanism_summary: >
+    Crowded leveraged long positioning can become fragile when perpetual funding
+    is elevated, open interest is rising, and the perp trades at a premium to
+    spot. If spot demand does not absorb a small adverse move, forced
+    deleveraging and liquidity withdrawal can create short-horizon downside tail
+    risk. This contract defines only the Quant signal event semantics; it does
+    not define sizing, leverage, or execution rules.
+  required_kinds:
+    - perp_funding_rate
+    - perp_open_interest
+    - perp_spot_basis
+  required_subjects:
+    - BTCUSDT
+    - ETHUSDT
+  required_payload_fields:
+    perp_funding_rate:
+      - funding_rate
+      - funding_rate_raw
+      - funding_type
+      - funding_interval
+    perp_open_interest:
+      - open_interest_raw
+      - open_interest_unit
+      - open_interest_notional_usdt
+      - normalization_price
+      - normalization_source
+    perp_spot_basis:
+      - basis_bps
+      - perp_price
+      - spot_price
+      - basis_type
+    observation_metadata:
+      - coverage_status
+      - coverage_expected_points
+      - coverage_observed_points
+      - coverage_missing_points
+      - raw_payload_hash
+      - replay_visibility
+  lookback_window: 24h open-interest history, latest settled funding, latest perp/spot basis
+  stale_tolerance: 15m for open-interest and basis; 8h30m for settled funding
+  warmup_required: >
+    At least two open-interest observations inside the replay window are required;
+    production research should use a 24h window before treating strength as
+    comparable across symbols.
+  direction_rule: >
+    Emit SHORT only when latest funding_rate >= 0.0003, open_interest_change_pct
+    over the available lookback >= 0.05, and latest perp_spot_basis >= 10 bps.
+    Otherwise emit no SignalEvent.
+  strength_rule: >
+    Strength is a bounded [0, 1] average of normalized funding, OI-change, and
+    basis components. It is a pressure score, not a position size.
+  confidence_rule: >
+    Confidence starts conservatively, increases with threshold confirmation and
+    complete OI coverage metadata, and is reduced to no signal when required
+    observations are missing or stale.
+  reason_codes:
+    - code: leverage_pressure_short
+      meaning: High funding, rising open interest, and perp premium indicate crowded long-side leverage pressure.
+    - code: insufficient_data
+      meaning: Required funding, open-interest, or basis observations are missing or insufficient for replay.
+    - code: stale_data
+      meaning: Latest open-interest/basis/funding observations exceed their stale tolerance.
+    - code: threshold_not_met
+      meaning: Inputs are present but funding, OI change, or basis did not cross the contract thresholds.
+  metadata_schema:
+    signal_name: string
+    funding_rate: float
+    funding_observed_at: iso8601
+    open_interest_start: float
+    open_interest_end: float
+    open_interest_change_pct: float
+    open_interest_start_observed_at: iso8601
+    open_interest_end_observed_at: iso8601
+    open_interest_coverage_status: complete | incomplete | unknown
+    basis_bps: float
+    basis_observed_at: iso8601
+    thresholds: object
+    used_observation_count: integer
+    used_observation_kinds: list[string]
+    position_sizing: not_defined_by_quant_signal
+  failure_modes:
+    - Spot-led bull markets can keep funding high while price continues upward.
+    - Rising OI can represent hedged or basis capital rather than unstable directional longs.
+    - Exchange OI may still be venue-specific and may not represent global leverage pressure.
+    - Positive basis can reflect structural demand or funding-cycle timing rather than weak spot support.
+    - Simple public thresholds may decay quickly or become regime-dependent.
+    - Costs, spread, latency, and liquidation-path execution assumptions are not evaluated by this contract.
+  minimum_tests:
+    - Missing required observations return None.
+    - Thresholds not met return None.
+    - High funding plus rising OI plus perp premium emits SHORT.
+    - Signal timestamp equals max observed_at of used observations.
+    - Stale microstructure observations return None.
+    - Replay ordering is deterministic.
+  trader_visible_semantics: >
+    A SHORT event means Quant observed elevated downside liquidation-pressure
+    risk over a 4h-24h horizon. Strength and confidence are diagnostic pressure
+    scores. They are not order quantity, leverage, max exposure, stop, or
+    portfolio-risk instructions.

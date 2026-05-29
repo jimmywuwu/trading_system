@@ -1,10 +1,13 @@
 from .data_provider import DataProvider
 from .models import (
+    BasisPayload,
     CandlePayload,
+    FundingRatePayload,
     MacroPayload,
     MessagePayload,
     Observation,
     ObservationKind,
+    OpenInterestPayload,
     OrderIntent,
     OrderSide,
     OrderType,
@@ -17,11 +20,14 @@ from .strategy import Strategy
 
 __all__ = [
     "DataProvider",
+    "BasisPayload",
     "CandlePayload",
+    "FundingRatePayload",
     "MacroPayload",
     "MessagePayload",
     "Observation",
     "ObservationKind",
+    "OpenInterestPayload",
     "OrderIntent",
     "OrderSide",
     "OrderType",

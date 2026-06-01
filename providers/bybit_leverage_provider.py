@@ -454,11 +454,22 @@ class BybitLeveragePressureProvider(DataProvider):
             params[start_param] = str(int(current.timestamp() * 1000))
             params[end_param] = str(int(window_end.timestamp() * 1000))
             params["limit"] = str(self.max_limit)
-            payload = self._request(endpoint, params)
-            ret_code = payload.get("retCode")
-            if ret_code != 0:
-                raise RuntimeError(f"Bybit request failed for {endpoint}: {ret_code} {payload.get('retMsg')}")
-            yield payload
+            seen_cursors: set[str] = set()
+            while True:
+                payload = self._request(endpoint, params)
+                ret_code = payload.get("retCode")
+                if ret_code != 0:
+                    raise RuntimeError(f"Bybit request failed for {endpoint}: {ret_code} {payload.get('retMsg')}")
+                yield payload
+
+                next_cursor = payload.get("result", {}).get("nextPageCursor")
+                if not next_cursor:
+                    break
+                if next_cursor in seen_cursors:
+                    raise RuntimeError(f"Bybit pagination cursor repeated for {endpoint}: {next_cursor}")
+                seen_cursors.add(next_cursor)
+                params["cursor"] = next_cursor
+                self._delay()
             current = window_end
             self._delay()
 
@@ -511,7 +522,7 @@ class BybitLeveragePressureProvider(DataProvider):
         by_key: dict[tuple[str, ObservationKind, datetime, str], Observation] = {}
         for observation in observations:
             endpoint = observation.metadata.get("source_endpoint", "")
-            by_key[(observation.symbol, observation.kind, observation.occurred_at, endpoint)] = observation
+            by_key.setdefault((observation.symbol, observation.kind, observation.occurred_at, endpoint), observation)
         return sorted(by_key.values(), key=lambda item: item.occurred_at)
 
     @staticmethod

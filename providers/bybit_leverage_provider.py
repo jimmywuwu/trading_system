@@ -528,6 +528,7 @@ class BybitLeveragePressureProvider(DataProvider):
         window: timedelta = timedelta(days=2),
         limit: int | None = None,
     ) -> Iterable[tuple[datetime, datetime, dict[str, Any]]]:
+        """Yield every paginated response for each bounded Bybit request window."""
         current = self._as_utc(start)
         end = self._as_utc(end)
         request_limit = limit or self.max_limit

@@ -242,6 +242,34 @@ class BybitLeveragePressureProviderTest(unittest.TestCase):
             ["100", "101", "102"],
         )
 
+    def test_open_interest_rejects_repeated_next_page_cursor(self) -> None:
+        requested_cursors: list[str | None] = []
+
+        def fake_http_get(url: str, headers: dict[str, str]) -> dict:
+            del headers
+            query = parse_qs(urlparse(url).query)
+            cursor = query.get("cursor", [None])[0]
+            requested_cursors.append(cursor)
+            return {
+                "retCode": 0,
+                "retMsg": "OK",
+                "result": {
+                    "list": [
+                        {"openInterest": "100", "timestamp": "1780018500000"},
+                    ],
+                    "nextPageCursor": "cursor-1",
+                },
+            }
+
+        provider = BybitLeveragePressureProvider(http_get=fake_http_get)
+        start = datetime(2026, 5, 29, 1, 0, tzinfo=timezone.utc)
+        end = datetime(2026, 5, 29, 2, 0, tzinfo=timezone.utc)
+
+        with self.assertRaisesRegex(RuntimeError, "pagination cursor repeated"):
+            provider.fetch_open_interest("BTCUSDT", start, end)
+
+        self.assertEqual(requested_cursors, [None, "cursor-1"])
+
 
 if __name__ == "__main__":
     unittest.main()

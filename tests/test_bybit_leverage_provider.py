@@ -7,6 +7,7 @@ import tempfile
 import unittest
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from urllib.parse import parse_qs, urlparse
 
 from core.models import BasisPayload, FundingRatePayload, ObservationKind, OpenInterestPayload
 from providers.bybit_leverage_provider import BybitLeveragePressureProvider
@@ -177,6 +178,97 @@ class BybitLeveragePressureProviderTest(unittest.TestCase):
 
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("Export a conservative Bybit leverage-pressure", result.stdout)
+
+    def test_open_interest_follows_next_page_cursor_until_empty(self) -> None:
+        pages = {
+            None: {
+                "retCode": 0,
+                "retMsg": "OK",
+                "result": {
+                    "list": [
+                        {"openInterest": "100", "timestamp": "1780018500000"},
+                    ],
+                    "nextPageCursor": "cursor-1",
+                },
+            },
+            "cursor-1": {
+                "retCode": 0,
+                "retMsg": "OK",
+                "result": {
+                    "list": [
+                        {"openInterest": "101", "timestamp": "1780018800000"},
+                    ],
+                    "nextPageCursor": "cursor-2",
+                },
+            },
+            "cursor-2": {
+                "retCode": 0,
+                "retMsg": "OK",
+                "result": {
+                    "list": [
+                        {"openInterest": "102", "timestamp": "1780019100000"},
+                        {"openInterest": "102-duplicate", "timestamp": "1780019100000"},
+                    ],
+                    "nextPageCursor": "",
+                },
+            },
+        }
+        requested_cursors: list[str | None] = []
+
+        def fake_http_get(url: str, headers: dict[str, str]) -> dict:
+            del headers
+            query = parse_qs(urlparse(url).query)
+            cursor = query.get("cursor", [None])[0]
+            requested_cursors.append(cursor)
+            return pages[cursor]
+
+        provider = BybitLeveragePressureProvider(http_get=fake_http_get)
+        start = datetime(2026, 5, 29, 1, 0, tzinfo=timezone.utc)
+        end = datetime(2026, 5, 29, 2, 0, tzinfo=timezone.utc)
+
+        observations = provider.fetch_open_interest("BTCUSDT", start, end)
+
+        self.assertEqual(requested_cursors, [None, "cursor-1", "cursor-2"])
+        self.assertEqual(
+            [observation.occurred_at.isoformat() for observation in observations],
+            [
+                "2026-05-29T01:35:00+00:00",
+                "2026-05-29T01:40:00+00:00",
+                "2026-05-29T01:45:00+00:00",
+            ],
+        )
+        self.assertEqual(
+            [observation.payload.open_interest_raw for observation in observations],
+            ["100", "101", "102"],
+        )
+
+    def test_open_interest_rejects_repeated_next_page_cursor(self) -> None:
+        requested_cursors: list[str | None] = []
+
+        def fake_http_get(url: str, headers: dict[str, str]) -> dict:
+            del headers
+            query = parse_qs(urlparse(url).query)
+            cursor = query.get("cursor", [None])[0]
+            requested_cursors.append(cursor)
+            return {
+                "retCode": 0,
+                "retMsg": "OK",
+                "result": {
+                    "list": [
+                        {"openInterest": "100", "timestamp": "1780018500000"},
+                    ],
+                    "nextPageCursor": "cursor-1",
+                },
+            }
+
+        provider = BybitLeveragePressureProvider(http_get=fake_http_get)
+        start = datetime(2026, 5, 29, 1, 0, tzinfo=timezone.utc)
+        end = datetime(2026, 5, 29, 2, 0, tzinfo=timezone.utc)
+
+        with self.assertRaisesRegex(RuntimeError, "pagination cursor repeated"):
+            provider.fetch_open_interest("BTCUSDT", start, end)
+
+        self.assertEqual(requested_cursors, [None, "cursor-1"])
 
 
 if __name__ == "__main__":

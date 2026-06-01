@@ -184,9 +184,9 @@ class BybitLeveragePressureProvider(DataProvider):
             limit=self.open_interest_limit,
         ):
             rows = payload.get("result", {}).get("list", [])
-            if len(rows) >= self.open_interest_limit:
+            if len(rows) >= self.open_interest_limit and not payload.get("result", {}).get("nextPageCursor"):
                 raise RuntimeError(
-                    "Bybit open-interest response reached the endpoint limit; "
+                    "Bybit open-interest response reached the endpoint limit without a nextPageCursor; "
                     f"requested window {window_start.isoformat()} -> {window_end.isoformat()} "
                     "may be truncated. Reduce open_interest_window before replay export."
                 )
@@ -528,6 +528,7 @@ class BybitLeveragePressureProvider(DataProvider):
         window: timedelta = timedelta(days=2),
         limit: int | None = None,
     ) -> Iterable[tuple[datetime, datetime, dict[str, Any]]]:
+        """Yield every paginated response for each bounded Bybit request window."""
         current = self._as_utc(start)
         end = self._as_utc(end)
         request_limit = limit or self.max_limit
@@ -537,11 +538,22 @@ class BybitLeveragePressureProvider(DataProvider):
             params[start_param] = str(int(current.timestamp() * 1000))
             params[end_param] = str(int(window_end.timestamp() * 1000))
             params["limit"] = str(request_limit)
-            payload = self._request(endpoint, params)
-            ret_code = payload.get("retCode")
-            if ret_code != 0:
-                raise RuntimeError(f"Bybit request failed for {endpoint}: {ret_code} {payload.get('retMsg')}")
-            yield current, window_end, payload
+            seen_cursors: set[str] = set()
+            while True:
+                payload = self._request(endpoint, params)
+                ret_code = payload.get("retCode")
+                if ret_code != 0:
+                    raise RuntimeError(f"Bybit request failed for {endpoint}: {ret_code} {payload.get('retMsg')}")
+                yield current, window_end, payload
+
+                next_cursor = payload.get("result", {}).get("nextPageCursor")
+                if not next_cursor:
+                    break
+                if next_cursor in seen_cursors:
+                    raise RuntimeError(f"Bybit pagination cursor repeated for {endpoint}: {next_cursor}")
+                seen_cursors.add(next_cursor)
+                params["cursor"] = next_cursor
+                self._delay()
             current = window_end
             self._delay()
 
@@ -594,7 +606,7 @@ class BybitLeveragePressureProvider(DataProvider):
         by_key: dict[tuple[str, ObservationKind, datetime, str], Observation] = {}
         for observation in observations:
             endpoint = observation.metadata.get("source_endpoint", "")
-            by_key[(observation.symbol, observation.kind, observation.occurred_at, endpoint)] = observation
+            by_key.setdefault((observation.symbol, observation.kind, observation.occurred_at, endpoint), observation)
         return sorted(by_key.values(), key=lambda item: item.occurred_at)
 
     @staticmethod

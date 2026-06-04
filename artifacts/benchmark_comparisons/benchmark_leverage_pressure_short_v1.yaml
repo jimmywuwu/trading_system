@@ -1,0 +1,30 @@
+BenchmarkComparison:
+  id: benchmark_leverage_pressure_short_v1
+  research_result_id: signal_research_leverage_pressure_short_v1
+  benchmarks:
+    - name: cash
+      construction: "No exposure over the same fixture window."
+      exposure: "0%"
+      total_return: "0.00000000"
+      max_drawdown: "0.00000000"
+      volatility: "0.00000000"
+      sharpe: "not_applicable"
+      turnover: "0"
+    - name: buy_and_hold_long_btcusdt_perp
+      construction: "Long BTCUSDT linear-perp close from first to last available 5m candle in fixture."
+      exposure: "100% long"
+      total_return: "-0.03487821"
+      max_drawdown: "not_computed_in_first_pass"
+      volatility: "not_computed_in_first_pass"
+      sharpe: "not_computed_in_first_pass"
+      turnover: "0"
+    - name: always_short_btcusdt_perp
+      construction: "Short BTCUSDT linear-perp close from first to last available 5m candle in fixture; shown only as directional baseline, not a recommendation."
+      exposure: "100% short"
+      total_return: "0.03487821"
+      max_drawdown: "not_computed_in_first_pass"
+      volatility: "not_computed_in_first_pass"
+      sharpe: "not_computed_in_first_pass"
+      turnover: "0"
+  strategy_vs_benchmark: "The v1 signal emitted zero events, so realized strategy exposure was equivalent to cash and did not participate in the always-short baseline's positive return during this down month."
+  interpretation: "No alpha conclusion is possible. The useful evidence is negative: current contract thresholds failed the frequency sanity check before any benchmark superiority test could be meaningful."

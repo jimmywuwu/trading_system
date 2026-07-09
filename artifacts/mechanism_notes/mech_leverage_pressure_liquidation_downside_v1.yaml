@@ -1,0 +1,66 @@
+MechanismNote:
+  id: mech_leverage_pressure_liquidation_downside_v1
+  research_idea_id: idea_leverage_pressure_liquidation_downside_v1
+  mechanism_summary: >
+    Elevated and rising perpetual funding with expanding open interest can mark
+    a crowded leveraged-long state. If spot demand fails to confirm the perp-led
+    move, price support may be fragile. A modest adverse move can force stops,
+    margin reductions, and exchange liquidation engines to sell into thinning
+    liquidity, creating a short-horizon downside tail-risk feedback loop rather
+    than a simple average-return short signal.
+  participants:
+    forced_traders: >
+      Leveraged perp longs near margin limits, discretionary longs with stop-loss
+      rules, and liquidation engines converting margin pressure into mechanical
+      market sell flow.
+    slow_traders: >
+      Spot allocators, cross-venue basis capital, and discretionary arbitrageurs
+      that may be slower to add balance sheet when volatility rises or when
+      capital is fragmented across venues.
+    liquidity_providers: >
+      Market makers, perp/spot arbitrage desks, and orderbook liquidity providers
+      that may widen spreads or reduce displayed depth when inventory risk,
+      volatility, or adverse-selection risk increases.
+    informed_traders: >
+      Traders observing funding, open interest, basis, spot confirmation, and
+      liquidation conditions who may reduce long exposure or sell into fragile
+      leverage regimes before forced flows occur.
+  pressure_source: >
+    Crowded leveraged long demand raises funding and expands open interest, while
+    weak spot confirmation suggests the move may rely more on leverage than
+    durable cash demand. The pressure becomes nonlinear when price moves against
+    the crowded side and forced deleveraging starts consuming nearby liquidity.
+  expected_observable_footprints:
+    - Perp funding is elevated relative to recent history and/or rising quickly.
+    - Perp open interest increases over the same lookback window.
+    - Perp returns or basis lead spot while spot return or spot volume confirmation is weak.
+    - Forward 4h-24h returns show worse downside quantiles or more negative skew than unconditional periods.
+    - Max adverse excursion over 4h-24h increases after the crowded-leverage state.
+    - Optional liquidation prints cluster after adverse moves in flagged states.
+    - Optional orderbook depth thins or spreads widen before or during liquidation feedback.
+  expected_decay_reason: >
+    Funding and open-interest data are public, so simple static thresholds should
+    decay as traders learn them. Any persistent effect probably comes from
+    mechanical liquidation, venue/capital segmentation, inventory limits, latency
+    in balance-sheet deployment, and nonlinear liquidity withdrawal rather than
+    from secret information.
+  why_it_might_persist: >
+    The state is not necessarily an immediately arbitrageable mispricing. It is a
+    leverage/liquidity fragility condition: forced sellers cannot choose timing,
+    liquidity providers can step back under stress, and basis/spot capital may be
+    constrained exactly when it is needed. That combination can recur even if the
+    high-level signal is widely visible.
+  alternative_explanations:
+    - The effect may be simple short beta during bear or high-volatility regimes.
+    - High funding may reflect spot-led bull demand that can persist without liquidation.
+    - Rising open interest may represent hedged basis trades rather than crowded directional longs.
+    - Weak spot confirmation may be measurement noise from venue selection or candle aggregation.
+    - Any observed downside may be explained by generic momentum reversal or volatility clustering.
+    - Liquidation prints may be coincident labels rather than point-in-time tradable evidence.
+  invalidation_conditions:
+    - Funding plus open interest adds no information beyond momentum and volatility controls.
+    - Forward downside quantiles and max adverse excursion are not worse than unconditional periods.
+    - The effect appears only in one narrow threshold or one isolated historical episode.
+    - The condition works only in obvious bear regimes with no incremental value.
+    - Required funding, open-interest, and spot data cannot be reconstructed point-in-time.
+    - Costs, funding payments, spreads, slippage, or latency overwhelm any estimated effect.

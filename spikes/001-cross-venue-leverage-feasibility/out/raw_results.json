@@ -1,0 +1,645 @@
+[
+  {
+    "count": 4,
+    "endpoint": "https://api.coinbase.com/api/v3/brokerage/market/products?product_type=FUTURE&limit=100",
+    "error": null,
+    "fields_seen": [
+      "about_description",
+      "alias",
+      "alias_to",
+      "approximate_quote_24h_volume",
+      "auction_mode",
+      "base_cbrn",
+      "base_currency_id",
+      "base_display_symbol",
+      "base_increment",
+      "base_max_size",
+      "base_min_size",
+      "base_name",
+      "best_ask_price",
+      "best_bid_price",
+      "cancel_only",
+      "display_name",
+      "display_name_overwrite",
+      "fcm_trading_session_details",
+      "future_product_details",
+      "high_24h",
+      "icon_color",
+      "icon_url",
+      "is_alpha_testing",
+      "is_disabled",
+      "limit_only",
+      "low_24h",
+      "market_cap",
+      "mid_market_price",
+      "new",
+      "new_at",
+      "post_only",
+      "price",
+      "price_increment",
+      "price_percentage_change_24h",
+      "product_cbrn",
+      "product_id",
+      "product_type",
+      "product_venue",
+      "quote_cbrn",
+      "quote_currency_id",
+      "quote_display_symbol",
+      "quote_increment",
+      "quote_max_size",
+      "quote_min_size",
+      "quote_name",
+      "status",
+      "trading_disabled",
+      "view_only",
+      "volume_24h",
+      "volume_percentage_change_24h",
+      "watched"
+    ],
+    "notes": [
+      "Product endpoint exposes current state including OI/funding-like fields for perp products.",
+      "This is not a replay-safe historical OI/funding endpoint; requires forward polling archive."
+    ],
+    "observed_at": "2026-06-16T16:12:04.381095Z",
+    "rail": "regulated_current_product_state",
+    "replay_safe_history": false,
+    "sample": [
+      {
+        "display_name": "BTC PERP",
+        "future_product_details": {
+          "contract_code": "BIP",
+          "contract_code_display_name": "",
+          "contract_display_name": "BTC PERP",
+          "contract_expiry": "2030-12-20T16:00:00Z",
+          "contract_expiry_name": "2030-12",
+          "contract_expiry_timezone": "Europe/London",
+          "contract_expiry_type": "EXPIRING",
+          "contract_root_unit": "BTC",
+          "contract_size": "0.01",
+          "display_name": "Bitcoin Perpetual",
+          "funding_interval": "3600s",
+          "funding_rate": "0.000007",
+          "funding_time": "2026-06-16T16:00:00Z",
+          "futures_asset_type": "FUTURES_ASSET_TYPE_CRYPTO",
+          "futures_asset_types": [
+            "FUTURES_ASSET_TYPE_CRYPTO"
+          ],
+          "group_description": "nano BTC Perp Futures",
+          "group_short_description": "nano BTC Perp",
+          "index_price": "65791.386114",
+          "intraday_margin_rate": {
+            "long_margin_rate": "0.1000185",
+            "short_margin_rate": "0.1000008"
+          },
+          "non_crypto": false,
+          "open_interest": "181197",
+          "overnight_margin_rate": {
+            "long_margin_rate": "0.245625",
+            "short_margin_rate": "0.306375"
+          },
+          "perpetual_details": {
+            "base_asset_uuid": "",
+            "funding_rate": "",
+            "funding_time": null,
+            "max_leverage": "",
+            "open_interest": "181197",
+            "underlying_type": ""
+          },
+          "product_group_cbrn": "",
+          "region_enabled": {},
+          "risk_managed_by": "MANAGED_BY_FCM",
+          "settlement_price": "66500",
+          "time_to_expiry_ms": "142386476005",
+          "trading_hours_type": "TRADING_HOURS_TYPE_UNSPECIFIED",
+          "twenty_four_by_seven": true,
+          "venue": "cde"
+        },
+        "product_id": "BIP-20DEC30-CDE",
+        "product_type": "FUTURE"
+      },
+      {
+        "display_name": "BTC 26 JUN 26",
+        "future_product_details": {
+          "contract_code": "BIT",
+          "contract_code_display_name": "",
+          "contract_display_name": "BTC 26 JUN 26",
+          "contract_expiry": "2026-06-26T15:00:00Z",
+          "contract_expiry_name": "2026-06",
+          "contract_expiry_timezone": "Europe/London",
+          "contract_expiry_type": "EXPIRING",
+          "contract_root_unit": "BTC",
+          "contract_size": "0.01",
+          "display_name": "Bitcoin Futures (Jun 2026)",
+          "funding_interval": null,
+          "funding_rate": "",
+          "funding_time": null,
+          "futures_asset_type": "FUTURES_ASSET_TYPE_CRYPTO",
+          "futures_asset_types": [
+            "FUTURES_ASSET_TYPE_CRYPTO"
+          ],
+          "group_description": "nano Bitcoin Futures",
+          "group_short_description": "nano BTC",
+          "index_price": "",
+          "intraday_margin_rate": {
+            "long_margin_rate": "0.0999375",
+            "short_margin_rate": "0.1001096"
+          },
+          "non_crypto": false,
+          "open_interest": "73192",
+          "overnight_margin_rate": {
+            "long_margin_rate": "0.234375",
+            "short_margin_rate": "0.289"
+          },
+          "perpetual_details": {
+            "base_asset_uuid": "",
+            "funding_rate": "",
+            "funding_time": null,
+            "max_leverage": "",
+            "open_interest": "73192",
+            "underlying_type": ""
+          },
+          "product_group_cbrn": "",
+          "region_enabled": {},
+          "risk_managed_by": "MANAGED_BY_FCM",
+          "settlement_price": "66625",
+          "time_to_expiry_ms": "859676005",
+          "trading_hours_type": "TRADING_HOURS_TYPE_UNSPECIFIED",
+          "twenty_four_by_seven": true,
+          "venue": "cde"
+        },
+        "product_id": "BIT-26JUN26-CDE",
+        "product_type": "FUTURE"
+      },
+      {
+        "display_name": "ETH PERP",
+        "future_product_details": {
+          "contract_code": "ETP",
+          "contract_code_display_name": "",
+          "contract_display_name": "ETH PERP",
+          "contract_expiry": "2030-12-20T16:00:00Z",
+          "contract_expiry_name": "2030-12",
+          "contract_expiry_timezone": "Europe/London",
+          "contract_expiry_type": "EXPIRING",
+          "contract_root_unit": "ETH",
+          "contract_size": "0.1",
+          "display_name": "Ethereum Perpetual",
+          "funding_interval": "3600s",
+          "funding_rate": "0.00001",
+          "funding_time": "2026-06-16T16:00:00Z",
+          "futures_asset_type": "FUTURES_ASSET_TYPE_CRYPTO",
+          "futures_asset_types": [
+            "FUTURES_ASSET_TYPE_CRYPTO"
+          ],
+          "group_description": "nano ETH Perp Futures",
+          "group_short_description": "nano ETH Perp",
+          "index_price": "1779.544375",
+          "intraday_margin_rate": {
+            "long_margin_rate": "0.100062",
+            "short_margin_rate": "0.0998894"
+          },
+          "non_crypto": false,
+          "open_interest": "197263",
+          "overnight_margin_rate": {
+            "long_margin_rate": "0.24525",
+            "short_margin_rate": "0.33475"
+          },
+          "perpetual_details": {
+            "base_asset_uuid": "",
+            "funding_rate": "",
+            "funding_time": null,
+            "max_leverage": "",
+            "open_interest": "197263",
+            "underlying_type": ""
+          },
+          "product_group_cbrn": "",
+          "region_enabled": {},
+          "risk_managed_by": "MANAGED_BY_FCM",
+          "settlement_price": "1818.5",
+          "time_to_expiry_ms": "142386476005",
+          "trading_hours_type": "TRADING_HOURS_TYPE_UNSPECIFIED",
+          "twenty_four_by_seven": true,
+          "venue": "cde"
+        },
+        "product_id": "ETP-20DEC30-CDE",
+        "product_type": "FUTURE"
+      },
+      {
+        "display_name": "ETH 26 JUN 26",
+        "future_product_details": {
+          "contract_code": "ET",
+          "contract_code_display_name": "",
+          "contract_display_name": "ETH 26 JUN 26",
+          "contract_expiry": "2026-06-26T15:00:00Z",
+          "contract_expiry_name": "2026-06",
+          "contract_expiry_timezone": "Europe/London",
+          "contract_expiry_type": "EXPIRING",
+          "contract_root_unit": "ETH",
+          "contract_size": "0.1",
+          "display_name": "Ethereum Futures (Jun 2026)",
+          "funding_interval": null,
+          "funding_rate": "",
+          "funding_time": null,
+          "futures_asset_type": "FUTURES_ASSET_TYPE_CRYPTO",
+          "futures_asset_types": [
+            "FUTURES_ASSET_TYPE_CRYPTO"
+          ],
+          "group_description": "nano Ether Futures",
+          "group_short_description": "nano ETH",
+          "index_price": "",
+          "intraday_margin_rate": {
+            "long_margin_rate": "0.1000441",
+            "short_margin_rate": "0.0999745"
+          },
+          "non_crypto": false,
+          "open_interest": "47286",
+          "overnight_margin_rate": {
+            "long_margin_rate": "0.234625",
+            "short_margin_rate": "0.316375"
+          },
+          "perpetual_details": {
+            "base_asset_uuid": "",
+            "funding_rate": "",
+            "funding_time": null,
+            "max_leverage": "",
+            "open_interest": "47286",
+            "underlying_type": ""
+          },
+          "product_group_cbrn": "",
+          "region_enabled": {},
+          "risk_managed_by": "MANAGED_BY_FCM",
+          "settlement_price": "1821",
+          "time_to_expiry_ms": "859676005",
+          "trading_hours_type": "TRADING_HOURS_TYPE_UNSPECIFIED",
+          "twenty_four_by_seven": true,
+          "venue": "cde"
+        },
+        "product_id": "ET-26JUN26-CDE",
+        "product_type": "FUTURE"
+      }
+    ],
+    "status": "ok",
+    "subject": null,
+    "venue": "coinbase_derivatives"
+  },
+  {
+    "count": 7,
+    "endpoint": "https://api.coinbase.com/api/v3/brokerage/market/products/BIP-20DEC30-CDE/candles?start=1781604000&end=1781625600&granularity=ONE_HOUR",
+    "error": null,
+    "fields_seen": [
+      "close",
+      "high",
+      "low",
+      "open",
+      "start",
+      "volume"
+    ],
+    "notes": [
+      "Candle history is available, but price/volume alone is insufficient for leverage-pressure backtest."
+    ],
+    "observed_at": "2026-06-16T16:12:04.381095Z",
+    "rail": "regulated_candle_history",
+    "replay_safe_history": true,
+    "sample": [
+      {
+        "close": "65815",
+        "high": "65915",
+        "low": "65785",
+        "open": "65855",
+        "start": "1781625600",
+        "volume": "1749"
+      },
+      {
+        "close": "65835",
+        "high": "65960",
+        "low": "65590",
+        "open": "65615",
+        "start": "1781622000",
+        "volume": "19972"
+      },
+      {
+        "close": "65595",
+        "high": "66235",
+        "low": "65315",
+        "open": "66015",
+        "start": "1781618400",
+        "volume": "72956"
+      }
+    ],
+    "status": "ok",
+    "subject": "BIP-20DEC30-CDE",
+    "venue": "coinbase_derivatives"
+  },
+  {
+    "count": 6,
+    "endpoint": "https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=1h&startTime=1781604725703&endTime=1781626325703",
+    "error": null,
+    "fields_seen": [
+      "openInterest",
+      "singleOpenInterest",
+      "timestamp"
+    ],
+    "notes": [
+      "Historical endpoint exists; production provider must keep pagination-safe cursor/window handling."
+    ],
+    "observed_at": "2026-06-16T16:12:05.703348Z",
+    "rail": "offshore_oi_history",
+    "replay_safe_history": true,
+    "sample": [
+      {
+        "openInterest": "51372.67900000",
+        "singleOpenInterest": "25686.34",
+        "timestamp": "1781625600000"
+      },
+      {
+        "openInterest": "51587.60300000",
+        "singleOpenInterest": "25793.802",
+        "timestamp": "1781622000000"
+      },
+      {
+        "openInterest": "52069.82000000",
+        "singleOpenInterest": "26034.91",
+        "timestamp": "1781618400000"
+      }
+    ],
+    "status": "ok",
+    "subject": "BTCUSDT",
+    "venue": "bybit"
+  },
+  {
+    "count": 1,
+    "endpoint": "https://api.bybit.com/v5/market/funding/history?category=linear&symbol=BTCUSDT&startTime=1781604725703&endTime=1781626325703",
+    "error": null,
+    "fields_seen": [
+      "fundingRate",
+      "fundingRateTimestamp",
+      "symbol"
+    ],
+    "notes": [
+      "Historical endpoint exists; production provider must keep pagination-safe cursor/window handling."
+    ],
+    "observed_at": "2026-06-16T16:12:05.703348Z",
+    "rail": "offshore_funding_history",
+    "replay_safe_history": true,
+    "sample": [
+      {
+        "fundingRate": "0.00004902",
+        "fundingRateTimestamp": "1781625600000",
+        "symbol": "BTCUSDT"
+      }
+    ],
+    "status": "ok",
+    "subject": "BTCUSDT",
+    "venue": "bybit"
+  },
+  {
+    "count": 1,
+    "endpoint": "https://api.hyperliquid.xyz/info",
+    "error": null,
+    "fields_seen": [
+      "dayBaseVlm",
+      "dayNtlVlm",
+      "funding",
+      "impactPxs",
+      "markPx",
+      "midPx",
+      "openInterest",
+      "oraclePx",
+      "premium",
+      "prevDayPx"
+    ],
+    "notes": [
+      "Current OI/mark/oracle/funding available; archive needed for current-state replay."
+    ],
+    "observed_at": "2026-06-16T16:12:06.094089Z",
+    "rail": "offshore_current_state",
+    "replay_safe_history": false,
+    "sample": {
+      "dayBaseVlm": "28650.06712",
+      "dayNtlVlm": "1899552140.2798404694",
+      "funding": "0.0000125",
+      "impactPxs": [
+        "65817.6",
+        "65823.0"
+      ],
+      "markPx": "65826.0",
+      "midPx": "65822.5",
+      "openInterest": "31230.50226",
+      "oraclePx": "65854.0",
+      "premium": "-0.0004707383",
+      "prevDayPx": "67232.0"
+    },
+    "status": "ok",
+    "subject": "BTC",
+    "venue": "hyperliquid"
+  },
+  {
+    "count": 24,
+    "endpoint": "https://api.hyperliquid.xyz/info",
+    "error": null,
+    "fields_seen": [
+      "coin",
+      "fundingRate",
+      "premium",
+      "time"
+    ],
+    "notes": [
+      "Funding history endpoint is directly replayable for settled funding observations."
+    ],
+    "observed_at": "2026-06-16T16:12:06.094089Z",
+    "rail": "offshore_funding_history",
+    "replay_safe_history": true,
+    "sample": [
+      {
+        "coin": "BTC",
+        "fundingRate": "0.0000042773",
+        "premium": "-0.0004657816",
+        "time": 1781542800050
+      },
+      {
+        "coin": "BTC",
+        "fundingRate": "0.0000074966",
+        "premium": "-0.0004400268",
+        "time": 1781546400012
+      },
+      {
+        "coin": "BTC",
+        "fundingRate": "0.0000089755",
+        "premium": "-0.0004281963",
+        "time": 1781550000021
+      }
+    ],
+    "status": "ok",
+    "subject": "BTC",
+    "venue": "hyperliquid"
+  },
+  {
+    "count": 1,
+    "endpoint": "https://www.okx.com/api/v5/public/funding-rate?instId=BTC-USDT-SWAP",
+    "error": null,
+    "fields_seen": [
+      "formulaType",
+      "fundingRate",
+      "fundingTime",
+      "impactValue",
+      "instId",
+      "instType",
+      "interestRate",
+      "maxFundingRate",
+      "method",
+      "minFundingRate",
+      "nextFundingRate",
+      "nextFundingTime",
+      "premium",
+      "prevFundingTime",
+      "settFundingRate",
+      "settState",
+      "ts"
+    ],
+    "notes": [
+      "Funding history exists."
+    ],
+    "observed_at": "2026-06-16T16:12:06.858062Z",
+    "rail": "offshore_current_funding",
+    "replay_safe_history": false,
+    "sample": [
+      {
+        "formulaType": "withRate",
+        "fundingRate": "-0.0000111750629018",
+        "fundingTime": "1781654400000",
+        "impactValue": "20000.0000000000000000",
+        "instId": "BTC-USDT-SWAP",
+        "instType": "SWAP",
+        "interestRate": "0.0001000000000000",
+        "maxFundingRate": "0.00375",
+        "method": "current_period",
+        "minFundingRate": "-0.00375",
+        "nextFundingRate": "",
+        "nextFundingTime": "1781683200000",
+        "premium": "-0.0005330587549206",
+        "prevFundingTime": "1781625600000",
+        "settFundingRate": "-0.0000108643309843",
+        "settState": "settled",
+        "ts": "1781626260503"
+      }
+    ],
+    "status": "ok",
+    "subject": "BTC-USDT-SWAP",
+    "venue": "okx"
+  },
+  {
+    "count": 1,
+    "endpoint": "https://www.okx.com/api/v5/public/open-interest?instType=SWAP&instId=BTC-USDT-SWAP",
+    "error": null,
+    "fields_seen": [
+      "instId",
+      "instType",
+      "oi",
+      "oiCcy",
+      "oiUsd",
+      "ts"
+    ],
+    "notes": [
+      "OKX current OI/funding is useful; OI history still needs separate endpoint/vendor review."
+    ],
+    "observed_at": "2026-06-16T16:12:06.858062Z",
+    "rail": "offshore_current_oi",
+    "replay_safe_history": false,
+    "sample": [
+      {
+        "instId": "BTC-USDT-SWAP",
+        "instType": "SWAP",
+        "oi": "3080765.97000001177",
+        "oiCcy": "30807.6597000001177",
+        "oiUsd": "2027461327.15491774587231",
+        "ts": "1781626326941"
+      }
+    ],
+    "status": "ok",
+    "subject": "BTC-USDT-SWAP",
+    "venue": "okx"
+  },
+  {
+    "count": 10,
+    "endpoint": "https://www.okx.com/api/v5/public/funding-rate-history?instId=BTC-USDT-SWAP&limit=10",
+    "error": null,
+    "fields_seen": [
+      "formulaType",
+      "fundingRate",
+      "fundingTime",
+      "instId",
+      "instType",
+      "method",
+      "realizedRate"
+    ],
+    "notes": [
+      "Funding history exists."
+    ],
+    "observed_at": "2026-06-16T16:12:06.858062Z",
+    "rail": "offshore_funding_history",
+    "replay_safe_history": true,
+    "sample": [
+      {
+        "formulaType": "withRate",
+        "fundingRate": "-0.0000108643309843",
+        "fundingTime": "1781625600000",
+        "instId": "BTC-USDT-SWAP",
+        "instType": "SWAP",
+        "method": "current_period",
+        "realizedRate": "-0.0000108643309843"
+      },
+      {
+        "formulaType": "withRate",
+        "fundingRate": "-0.0000592277212018",
+        "fundingTime": "1781596800000",
+        "instId": "BTC-USDT-SWAP",
+        "instType": "SWAP",
+        "method": "current_period",
+        "realizedRate": "-0.0000592277212018"
+      },
+      {
+        "formulaType": "withRate",
+        "fundingRate": "-0.0000130999107801",
+        "fundingTime": "1781568000000",
+        "instId": "BTC-USDT-SWAP",
+        "instType": "SWAP",
+        "method": "current_period",
+        "realizedRate": "-0.0000130999107801"
+      }
+    ],
+    "status": "ok",
+    "subject": "BTC-USDT-SWAP",
+    "venue": "okx"
+  },
+  {
+    "count": null,
+    "endpoint": "https://www.cmegroup.com/CmeWS/mvc/Quotes/Future/8478/G",
+    "error": "HTTP 403",
+    "fields_seen": null,
+    "notes": [
+      "CME public web endpoint is not reliable from this runtime; treat as deferred/vendor/manual source."
+    ],
+    "observed_at": "2026-06-16T16:12:07.336374Z",
+    "rail": "regulated_cme_public_web",
+    "replay_safe_history": false,
+    "sample": null,
+    "status": "blocked",
+    "subject": null,
+    "venue": "cme"
+  },
+  {
+    "count": null,
+    "endpoint": "https://www.cmegroup.com/CmeWS/mvc/ProductCalendar/Future/8478",
+    "error": "HTTP 403",
+    "fields_seen": null,
+    "notes": [
+      "CME public web endpoint is not reliable from this runtime; treat as deferred/vendor/manual source."
+    ],
+    "observed_at": "2026-06-16T16:12:07.336374Z",
+    "rail": "regulated_cme_public_web",
+    "replay_safe_history": false,
+    "sample": null,
+    "status": "blocked",
+    "subject": null,
+    "venue": "cme"
+  }
+]

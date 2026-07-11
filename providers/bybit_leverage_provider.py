@@ -5,8 +5,9 @@ import time
 from dataclasses import asdict
 from datetime import datetime, timedelta, timezone
 from hashlib import sha256
+from pathlib import Path
 from typing import Any, Callable, Iterable
-from urllib.parse import urlencode
+from urllib.parse import parse_qs, urlencode, urlparse
 from urllib.request import Request, urlopen
 
 from core.data_provider import DataProvider
@@ -20,6 +21,78 @@ from core.models import (
 )
 
 HttpGet = Callable[[str, dict[str, str]], dict[str, Any]]
+
+
+class BybitRawArchive:
+    """Append-only archive for Bybit raw REST responses.
+
+    The archive records endpoint-level payloads before normalization so a fixture
+    can be regenerated without live API calls and audited from raw payload hash to
+    normalized rows.
+    """
+
+    def __init__(self, directory: Path | str, filename: str = "raw_payloads.jsonl") -> None:
+        self.directory = Path(directory)
+        self.path = self.directory / filename
+
+    def recording_http_get(self, http_get: HttpGet) -> HttpGet:
+        def wrapped(url: str, headers: dict[str, str]) -> dict[str, Any]:
+            payload = http_get(url, headers)
+            self.append(url, payload)
+            return payload
+
+        return wrapped
+
+    def replay_http_get(self) -> HttpGet:
+        records_by_key: dict[tuple[str, tuple[tuple[str, tuple[str, ...]], ...]], dict[str, Any]] = {}
+        for record in self.iter_records():
+            key = self._key(record["endpoint"], record["params"])
+            records_by_key[key] = record["payload"]
+
+        def replay(url: str, headers: dict[str, str]) -> dict[str, Any]:
+            del headers
+            endpoint, params = self._endpoint_and_params(url)
+            key = self._key(endpoint, params)
+            if key not in records_by_key:
+                raise KeyError(f"raw archive has no Bybit payload for {endpoint} params={params}")
+            return json.loads(json.dumps(records_by_key[key]))
+
+        return replay
+
+    def append(self, url: str, payload: dict[str, Any]) -> None:
+        endpoint, params = self._endpoint_and_params(url)
+        record = {
+            "retrieved_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+            "endpoint": endpoint,
+            "params": params,
+            "payload_hash": BybitLeveragePressureProvider._hash_payload(payload),
+            "payload": payload,
+        }
+        self.directory.mkdir(parents=True, exist_ok=True)
+        with self.path.open("a", encoding="utf-8") as file:
+            file.write(json.dumps(record, sort_keys=True, separators=(",", ":")) + "\n")
+
+    def iter_records(self) -> Iterable[dict[str, Any]]:
+        if not self.path.exists():
+            return iter(())
+        return self._read_records()
+
+    def _read_records(self) -> Iterable[dict[str, Any]]:
+        with self.path.open("r", encoding="utf-8") as file:
+            for line in file:
+                if line.strip():
+                    yield json.loads(line)
+
+    @classmethod
+    def _endpoint_and_params(cls, url: str) -> tuple[str, dict[str, str]]:
+        parsed = urlparse(url)
+        params = {key: values[-1] for key, values in parse_qs(parsed.query, keep_blank_values=True).items()}
+        return parsed.path, params
+
+    @classmethod
+    def _key(cls, endpoint: str, params: dict[str, str]) -> tuple[str, tuple[tuple[str, tuple[str, ...]], ...]]:
+        normalized = tuple(sorted((key, (str(value),)) for key, value in params.items()))
+        return endpoint, normalized
 
 
 class BybitLeveragePressureProvider(DataProvider):
@@ -51,6 +124,8 @@ class BybitLeveragePressureProvider(DataProvider):
         open_interest_observed_lag: timedelta = timedelta(seconds=60),
         ingestion_run_id: str | None = None,
         fixture_version: str | None = None,
+        rate_limit_retry_delay_seconds: float = 2.0,
+        rate_limit_max_retries: int = 5,
     ) -> None:
         self.base_url = base_url.rstrip("/")
         self._http_get = http_get or self._default_http_get
@@ -60,6 +135,8 @@ class BybitLeveragePressureProvider(DataProvider):
         self.open_interest_observed_lag = open_interest_observed_lag
         self.ingestion_run_id = ingestion_run_id or f"bybit-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}"
         self.fixture_version = fixture_version or self.ingestion_run_id
+        self.rate_limit_retry_delay_seconds = rate_limit_retry_delay_seconds
+        self.rate_limit_max_retries = rate_limit_max_retries
 
     def get_latest(self, subject: str, kind: ObservationKind | None = None) -> Observation | None:
         end = self._floor_to_interval(datetime.now(timezone.utc), self.default_interval)
@@ -456,9 +533,17 @@ class BybitLeveragePressureProvider(DataProvider):
             params["limit"] = str(self.max_limit)
             seen_cursors: set[str] = set()
             while True:
-                payload = self._request(endpoint, params)
-                ret_code = payload.get("retCode")
-                if ret_code != 0:
+                attempts = 0
+                while True:
+                    payload = self._request(endpoint, params)
+                    ret_code = payload.get("retCode")
+                    if ret_code == 0:
+                        break
+                    if ret_code == 10006 and attempts < self.rate_limit_max_retries:
+                        attempts += 1
+                        if self.rate_limit_retry_delay_seconds > 0:
+                            time.sleep(self.rate_limit_retry_delay_seconds * attempts)
+                        continue
                     raise RuntimeError(f"Bybit request failed for {endpoint}: {ret_code} {payload.get('retMsg')}")
                 yield payload
 

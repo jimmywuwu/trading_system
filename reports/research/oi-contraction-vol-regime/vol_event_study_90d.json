@@ -1,0 +1,367 @@
+{
+  "fixture": "data/bybit_leverage_pressure_fixture_90d.jsonl",
+  "generated_at": "2026-07-08T00:39:07.680243",
+  "signal_params": {
+    "change_window": "4h",
+    "history_window": "14d",
+    "min_history": 300,
+    "trigger_percentile": 0.1,
+    "rearm_percentile": 0.2
+  },
+  "symbols": {
+    "BTCUSDT": {
+      "symbol": "BTCUSDT",
+      "raw_event_count": 35,
+      "full_vol_matched": {
+        "match_on": "vol",
+        "n_events": 26,
+        "n_controls": 11125,
+        "controls_per_event": 20,
+        "horizons": {
+          "4h": {
+            "n": 26,
+            "event_mean_vol": 0.007532986592302364,
+            "control_mean_vol": 0.008515084347574501,
+            "vol_lift": -0.11533623334593102,
+            "vol_lift_ci95": [
+              -0.2556351536758882,
+              0.05951507931133815
+            ],
+            "event_mean_abs_return": 0.003370163927520149,
+            "control_mean_abs_return": 0.007359983981233583,
+            "abs_return_lift": -0.5420962958461104,
+            "abs_return_lift_ci95": [
+              -0.746229395726246,
+              -0.2055896363225439
+            ]
+          },
+          "8h": {
+            "n": 26,
+            "event_mean_vol": 0.009903707406644254,
+            "control_mean_vol": 0.0119221159190507,
+            "vol_lift": -0.16929952083263777,
+            "vol_lift_ci95": [
+              -0.2847913871362241,
+              -0.04391307550505352
+            ],
+            "event_mean_abs_return": 0.00452836951730146,
+            "control_mean_abs_return": 0.010323997167236473,
+            "abs_return_lift": -0.5613743936629136,
+            "abs_return_lift_ci95": [
+              -0.707262737244763,
+              -0.3466489753277687
+            ]
+          },
+          "1d": {
+            "n": 26,
+            "event_mean_vol": 0.02006196400284743,
+            "control_mean_vol": 0.02009749464331608,
+            "vol_lift": -0.0017679139165970303,
+            "vol_lift_ci95": [
+              -0.1412500186001161,
+              0.17800909615471938
+            ],
+            "event_mean_abs_return": 0.012061792576224374,
+            "control_mean_abs_return": 0.01674505006730861,
+            "abs_return_lift": -0.27968011276522653,
+            "abs_return_lift_ci95": [
+              -0.5081316030088003,
+              0.011691841267064795
+            ]
+          }
+        },
+        "seed": 20260708
+      },
+      "full_return_matched": {
+        "match_on": "return",
+        "n_events": 26,
+        "n_controls": 11365,
+        "controls_per_event": 20,
+        "horizons": {
+          "4h": {
+            "n": 26,
+            "event_mean_vol": 0.007532986592302364,
+            "control_mean_vol": 0.00905156896576897,
+            "vol_lift": -0.1677700715985867,
+            "vol_lift_ci95": [
+              -0.2933414998178506,
+              -0.02903247576673007
+            ],
+            "event_mean_abs_return": 0.003370163927520149,
+            "control_mean_abs_return": 0.006688938993984718,
+            "abs_return_lift": -0.49615866872894243,
+            "abs_return_lift_ci95": [
+              -0.6854580589063944,
+              -0.22723551021348365
+            ]
+          },
+          "8h": {
+            "n": 26,
+            "event_mean_vol": 0.009903707406644254,
+            "control_mean_vol": 0.01291121785832346,
+            "vol_lift": -0.23293778206525717,
+            "vol_lift_ci95": [
+              -0.32429039069599186,
+              -0.12627282010454988
+            ],
+            "event_mean_abs_return": 0.00452836951730146,
+            "control_mean_abs_return": 0.009888361852111156,
+            "abs_return_lift": -0.5420505858273524,
+            "abs_return_lift_ci95": [
+              -0.6848401100915846,
+              -0.36257392822767476
+            ]
+          },
+          "1d": {
+            "n": 26,
+            "event_mean_vol": 0.02006196400284743,
+            "control_mean_vol": 0.02222751704760057,
+            "vol_lift": -0.09742667343885403,
+            "vol_lift_ci95": [
+              -0.23593518193241647,
+              0.060791836083392115
+            ],
+            "event_mean_abs_return": 0.012061792576224374,
+            "control_mean_abs_return": 0.01844693106648293,
+            "abs_return_lift": -0.3461355423970769,
+            "abs_return_lift_ci95": [
+              -0.565463587599991,
+              -0.1084602545106117
+            ]
+          }
+        },
+        "seed": 20260708
+      },
+      "midpoint": "2026-04-15T07:40:30+00:00",
+      "first_half": {
+        "match_on": "vol",
+        "n_events": 10,
+        "n_controls": 7162,
+        "controls_per_event": 20,
+        "horizons": {
+          "1d": {
+            "n": 10,
+            "event_mean_vol": 0.024802594284617556,
+            "control_mean_vol": 0.025315078371439072,
+            "vol_lift": -0.02024422280279048,
+            "vol_lift_ci95": [
+              -0.20885100853170757,
+              0.2724499661851758
+            ],
+            "event_mean_abs_return": 0.016329691995626127,
+            "control_mean_abs_return": 0.021654893178412023,
+            "abs_return_lift": -0.24591214276201745,
+            "abs_return_lift_ci95": [
+              -0.5857134742733121,
+              0.3081260876366323
+            ]
+          }
+        },
+        "seed": 20260708
+      },
+      "second_half": {
+        "match_on": "vol",
+        "n_events": 16,
+        "n_controls": 3674,
+        "controls_per_event": 20,
+        "horizons": {
+          "1d": {
+            "n": 16,
+            "event_mean_vol": 0.017099070076741184,
+            "control_mean_vol": 0.015004067039942785,
+            "vol_lift": 0.13962901066898903,
+            "vol_lift_ci95": [
+              -0.057089639366918354,
+              0.34883951513234246
+            ],
+            "event_mean_abs_return": 0.009394355439098279,
+            "control_mean_abs_return": 0.010644274688004218,
+            "abs_return_lift": -0.11742643679747966,
+            "abs_return_lift_ci95": [
+              -0.4409392027350333,
+              0.3620818924357341
+            ]
+          }
+        },
+        "seed": 20260708
+      }
+    },
+    "ETHUSDT": {
+      "symbol": "ETHUSDT",
+      "raw_event_count": 35,
+      "full_vol_matched": {
+        "match_on": "vol",
+        "n_events": 26,
+        "n_controls": 11166,
+        "controls_per_event": 20,
+        "horizons": {
+          "4h": {
+            "n": 26,
+            "event_mean_vol": 0.010118172183266856,
+            "control_mean_vol": 0.00961498824868083,
+            "vol_lift": 0.052333286486861974,
+            "vol_lift_ci95": [
+              -0.09240417098819853,
+              0.22366894408950344
+            ],
+            "event_mean_abs_return": 0.007211227441129376,
+            "control_mean_abs_return": 0.006461624314276568,
+            "abs_return_lift": 0.11600846635366979,
+            "abs_return_lift_ci95": [
+              -0.437692947851833,
+              0.9754616271785361
+            ]
+          },
+          "8h": {
+            "n": 26,
+            "event_mean_vol": 0.014412130125623824,
+            "control_mean_vol": 0.014530717638454343,
+            "vol_lift": -0.008161160087282071,
+            "vol_lift_ci95": [
+              -0.1695799607793944,
+              0.15033749430153942
+            ],
+            "event_mean_abs_return": 0.012201794978269223,
+            "control_mean_abs_return": 0.008946423424605445,
+            "abs_return_lift": 0.36387407561221563,
+            "abs_return_lift_ci95": [
+              -0.30474015506021257,
+              1.274183143837846
+            ]
+          },
+          "1d": {
+            "n": 26,
+            "event_mean_vol": 0.02604795244901859,
+            "control_mean_vol": 0.026350082388998844,
+            "vol_lift": -0.011465996026881253,
+            "vol_lift_ci95": [
+              -0.12103340141412999,
+              0.1134472765308574
+            ],
+            "event_mean_abs_return": 0.016672979848625043,
+            "control_mean_abs_return": 0.021707947217599166,
+            "abs_return_lift": -0.2319412019249868,
+            "abs_return_lift_ci95": [
+              -0.4645842266524217,
+              0.05787513042401615
+            ]
+          }
+        },
+        "seed": 20260708
+      },
+      "full_return_matched": {
+        "match_on": "return",
+        "n_events": 26,
+        "n_controls": 11406,
+        "controls_per_event": 20,
+        "horizons": {
+          "4h": {
+            "n": 26,
+            "event_mean_vol": 0.010118172183266856,
+            "control_mean_vol": 0.010693794409521125,
+            "vol_lift": -0.05382768774213276,
+            "vol_lift_ci95": [
+              -0.2131893297481794,
+              0.13889167603618868
+            ],
+            "event_mean_abs_return": 0.007211227441129376,
+            "control_mean_abs_return": 0.0074369788081510985,
+            "abs_return_lift": -0.03035525215888657,
+            "abs_return_lift_ci95": [
+              -0.5048846821648989,
+              0.627627845724126
+            ]
+          },
+          "8h": {
+            "n": 26,
+            "event_mean_vol": 0.014412130125623824,
+            "control_mean_vol": 0.0160516905855903,
+            "vol_lift": -0.10214254076379459,
+            "vol_lift_ci95": [
+              -0.26567752459458094,
+              0.07492827421988335
+            ],
+            "event_mean_abs_return": 0.012201794978269223,
+            "control_mean_abs_return": 0.011771223181376769,
+            "abs_return_lift": 0.036578339417917105,
+            "abs_return_lift_ci95": [
+              -0.4306622666337372,
+              0.6179888288474527
+            ]
+          },
+          "1d": {
+            "n": 26,
+            "event_mean_vol": 0.02604795244901859,
+            "control_mean_vol": 0.029335645541822133,
+            "vol_lift": -0.11207161226830575,
+            "vol_lift_ci95": [
+              -0.22718575779379835,
+              0.022202391144230393
+            ],
+            "event_mean_abs_return": 0.016672979848625043,
+            "control_mean_abs_return": 0.024542895727128335,
+            "abs_return_lift": -0.3206596306321071,
+            "abs_return_lift_ci95": [
+              -0.5156414128342761,
+              -0.08892519360359596
+            ]
+          }
+        },
+        "seed": 20260708
+      },
+      "midpoint": "2026-04-15T07:40:30+00:00",
+      "first_half": {
+        "match_on": "vol",
+        "n_events": 12,
+        "n_controls": 5810,
+        "controls_per_event": 20,
+        "horizons": {
+          "1d": {
+            "n": 12,
+            "event_mean_vol": 0.03174729933338763,
+            "control_mean_vol": 0.02737740949784123,
+            "vol_lift": 0.15961662975786584,
+            "vol_lift_ci95": [
+              0.005784291534002506,
+              0.3480189006085399
+            ],
+            "event_mean_abs_return": 0.02343045254969578,
+            "control_mean_abs_return": 0.019499869117996452,
+            "abs_return_lift": 0.20156973402820366,
+            "abs_return_lift_ci95": [
+              -0.20136340872544767,
+              0.6701139116177166
+            ]
+          }
+        },
+        "seed": 20260708
+      },
+      "second_half": {
+        "match_on": "vol",
+        "n_events": 14,
+        "n_controls": 5067,
+        "controls_per_event": 20,
+        "horizons": {
+          "1d": {
+            "n": 14,
+            "event_mean_vol": 0.021162797976702178,
+            "control_mean_vol": 0.022413129236660202,
+            "vol_lift": -0.05578566235690596,
+            "vol_lift_ci95": [
+              -0.20025411008079474,
+              0.11049869554494851
+            ],
+            "event_mean_abs_return": 0.010880860390564415,
+            "control_mean_abs_return": 0.01712486830447599,
+            "abs_return_lift": -0.36461640480350765,
+            "abs_return_lift_ci95": [
+              -0.6483975393560928,
+              0.04840172625381234
+            ]
+          }
+        },
+        "seed": 20260708
+      }
+    }
+  }
+}

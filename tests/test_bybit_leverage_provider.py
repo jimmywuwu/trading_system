@@ -8,7 +8,7 @@ from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
 from core.models import BasisPayload, FundingRatePayload, ObservationKind, OpenInterestPayload
-from providers.bybit_leverage_provider import BybitLeveragePressureProvider
+from providers.bybit_leverage_provider import BybitLeveragePressureProvider, BybitRawArchive
 from providers.file_provider import JsonLinesObservationProvider
 
 
@@ -109,6 +109,79 @@ class BybitLeveragePressureProviderTest(unittest.TestCase):
             self.assertIn(ObservationKind.PERP_FUNDING_RATE, round_trip_kinds)
             self.assertIn(ObservationKind.PERP_OPEN_INTEREST, round_trip_kinds)
             self.assertIn(ObservationKind.PERP_SPOT_BASIS, round_trip_kinds)
+
+    def test_raw_archive_records_and_replays_endpoint_payloads(self) -> None:
+        responses = {
+            "/v5/market/open-interest?category=linear": {
+                "retCode": 0,
+                "retMsg": "OK",
+                "result": {"list": [{"openInterest": "100", "timestamp": "1780018500000"}]},
+            },
+        }
+
+        def fake_http_get(url: str, headers: dict[str, str]) -> dict:
+            del headers
+            for marker, payload in responses.items():
+                if marker in url:
+                    return payload
+            raise AssertionError(f"unexpected URL: {url}")
+
+        with tempfile.TemporaryDirectory() as directory:
+            archive = BybitRawArchive(Path(directory))
+            provider = BybitLeveragePressureProvider(
+                http_get=archive.recording_http_get(fake_http_get),
+                ingestion_run_id="archive-test",
+                fixture_version="fixture-archive-v1",
+            )
+            start = datetime(2026, 5, 29, 1, 0, tzinfo=timezone.utc)
+            end = datetime(2026, 5, 29, 2, 0, tzinfo=timezone.utc)
+
+            live_observations = provider.fetch_open_interest("BTCUSDT", start, end)
+            archive_records = list(archive.iter_records())
+
+            self.assertEqual(len(archive_records), 1)
+            self.assertEqual(archive_records[0]["endpoint"], "/v5/market/open-interest")
+            self.assertEqual(archive_records[0]["params"]["symbol"], "BTCUSDT")
+            self.assertEqual(archive_records[0]["payload_hash"], BybitLeveragePressureProvider._hash_payload(responses["/v5/market/open-interest?category=linear"]))
+
+            replay_provider = BybitLeveragePressureProvider(
+                http_get=archive.replay_http_get(),
+                ingestion_run_id="archive-test",
+                fixture_version="fixture-archive-v1",
+            )
+            replay_observations = replay_provider.fetch_open_interest("BTCUSDT", start, end)
+
+            self.assertEqual(
+                [row.payload.open_interest_raw for row in replay_observations],
+                [row.payload.open_interest_raw for row in live_observations],
+            )
+            self.assertEqual(
+                [row.metadata["raw_payload_hash"] for row in replay_observations],
+                [row.metadata["raw_payload_hash"] for row in live_observations],
+            )
+
+    def test_rate_limited_payload_retries_before_failing_window(self) -> None:
+        responses = [
+            {"retCode": 10006, "retMsg": "Too many visits. Exceeded the API Rate Limit.", "result": {}},
+            {"retCode": 0, "retMsg": "OK", "result": {"list": [{"openInterest": "100", "timestamp": "1780018500000"}]}},
+        ]
+        calls = 0
+
+        def fake_http_get(url: str, headers: dict[str, str]) -> dict:
+            del url, headers
+            nonlocal calls
+            payload = responses[calls]
+            calls += 1
+            return payload
+
+        provider = BybitLeveragePressureProvider(http_get=fake_http_get, request_delay_seconds=0, rate_limit_retry_delay_seconds=0)
+        start = datetime(2026, 5, 29, 1, 0, tzinfo=timezone.utc)
+        end = datetime(2026, 5, 29, 2, 0, tzinfo=timezone.utc)
+
+        observations = provider.fetch_open_interest("BTCUSDT", start, end)
+
+        self.assertEqual(calls, 2)
+        self.assertEqual([row.payload.open_interest_raw for row in observations], ["100"])
 
     def test_open_interest_follows_next_page_cursor_until_empty(self) -> None:
         pages = {

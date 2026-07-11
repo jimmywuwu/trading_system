@@ -1,0 +1,279 @@
+{
+  "command_intended": "python3 reports/cross_venue_dispersion/run_milestone2_funding_dispersion.py --days 30",
+  "conclusion": "Funding-history-only cross-venue dispersion fixture is sufficient for a conservative first-pass descriptive/event study. This is not a tradable signal and does not support Trader handoff.",
+  "counts": {
+    "bybit": 91,
+    "common_three_venue_timestamps": 90,
+    "events_top_decile": 9,
+    "hyperliquid": 720,
+    "okx": 91
+  },
+  "data_provider_todo": [
+    "Persist raw funding-history payloads and normalized rows with source endpoint, event_ts_utc, observed_at_utc, raw payload hash.",
+    "Add deterministic pagination tests for Bybit funding history and OKX funding-rate-history beyond a single latest page before extending horizon >30d.",
+    "Keep current-state OI excluded from historical evidence until a forward archive exists; archived snapshots are replay-safe only from observed_at_utc onward.",
+    "If price-return event study is desired, explicitly approve/add replay-safe candle rails per venue rather than silently mixing unreviewed endpoints."
+  ],
+  "decision": "first_pass_completed_research_only",
+  "errors": {},
+  "events": [
+    {
+      "delta_dispersion_24h": -5.166276724980001e-05,
+      "delta_dispersion_8h": -1.6604145832300004e-05,
+      "dispersion_t0": 9.217544583230001e-05,
+      "dispersion_t_plus_24h": 4.05126785825e-05,
+      "dispersion_t_plus_8h": 7.55713e-05,
+      "event_ts_utc": "2026-05-25T08:00:00Z",
+      "rates_t0": {
+        "bybit": 8.207e-05,
+        "hyperliquid": -5.7273e-06,
+        "okx": -1.01054458323e-05
+      }
+    },
+    {
+      "delta_dispersion_24h": -2.0965754796799986e-05,
+      "delta_dispersion_8h": -5.506546802199993e-06,
+      "dispersion_t0": 0.0001110865468022,
+      "dispersion_t_plus_24h": 9.012079200540001e-05,
+      "dispersion_t_plus_8h": 0.00010558,
+      "event_ts_utc": "2026-05-27T08:00:00Z",
+      "rates_t0": {
+        "bybit": -9.095e-05,
+        "hyperliquid": -9.3216e-06,
+        "okx": 2.01365468022e-05
+      }
+    },
+    {
+      "delta_dispersion_24h": -1.8080000000000003e-05,
+      "delta_dispersion_8h": -2.0732795803000013e-05,
+      "dispersion_t0": 0.00010558,
+      "dispersion_t_plus_24h": 8.75e-05,
+      "dispersion_t_plus_8h": 8.484720419699999e-05,
+      "event_ts_utc": "2026-05-27T16:00:00Z",
+      "rates_t0": {
+        "bybit": -5.58e-06,
+        "hyperliquid": 1.25e-05,
+        "okx": 0.0001
+      }
+    },
+    {
+      "delta_dispersion_24h": -4.254866482760001e-05,
+      "delta_dispersion_8h": -7.63154820589e-05,
+      "dispersion_t0": 0.00010323138205890001,
+      "dispersion_t_plus_24h": 6.06827172313e-05,
+      "dispersion_t_plus_8h": 2.69159e-05,
+      "event_ts_utc": "2026-06-04T00:00:00Z",
+      "rates_t0": {
+        "bybit": -4.52e-06,
+        "hyperliquid": 1.25e-05,
+        "okx": 9.87113820589e-05
+      }
+    },
+    {
+      "delta_dispersion_24h": -5.4072175051600006e-05,
+      "delta_dispersion_8h": -7.192594677090001e-05,
+      "dispersion_t0": 9.06048412537e-05,
+      "dispersion_t_plus_24h": 3.65326662021e-05,
+      "dispersion_t_plus_8h": 1.8678894482799996e-05,
+      "event_ts_utc": "2026-06-07T08:00:00Z",
+      "rates_t0": {
+        "bybit": -1.916e-05,
+        "hyperliquid": 1.25e-05,
+        "okx": -7.81048412537e-05
+      }
+    },
+    {
+      "delta_dispersion_24h": -8.866824983749998e-05,
+      "delta_dispersion_8h": -8.355943069069999e-05,
+      "dispersion_t0": 0.00011251865099449999,
+      "dispersion_t_plus_24h": 2.3850401157000004e-05,
+      "dispersion_t_plus_8h": 2.8959220303799998e-05,
+      "event_ts_utc": "2026-06-08T16:00:00Z",
+      "rates_t0": {
+        "bybit": 3.697e-05,
+        "hyperliquid": 1.25e-05,
+        "okx": -7.55486509945e-05
+      }
+    },
+    {
+      "delta_dispersion_24h": -0.0001333258409731,
+      "delta_dispersion_8h": -6.852330170180001e-05,
+      "dispersion_t0": 0.0001559339409731,
+      "dispersion_t_plus_24h": 2.26081e-05,
+      "dispersion_t_plus_8h": 8.741063927129999e-05,
+      "event_ts_utc": "2026-06-11T08:00:00Z",
+      "rates_t0": {
+        "bybit": 9.561e-05,
+        "hyperliquid": 9.61e-07,
+        "okx": -6.03239409731e-05
+      }
+    },
+    {
+      "delta_dispersion_24h": -7.13175701941e-05,
+      "delta_dispersion_8h": -6.83946169637e-05,
+      "dispersion_t0": 9.10027169637e-05,
+      "dispersion_t_plus_24h": 1.96851467696e-05,
+      "dispersion_t_plus_8h": 2.26081e-05,
+      "event_ts_utc": "2026-06-12T00:00:00Z",
+      "rates_t0": {
+        "bybit": 8.605e-05,
+        "hyperliquid": 1.25e-05,
+        "okx": -4.9527169637e-06
+      }
+    },
+    {
+      "delta_dispersion_24h": -1.5720312990500005e-05,
+      "delta_dispersion_8h": -1.0245244629200002e-05,
+      "dispersion_t0": 9.04512940001e-05,
+      "dispersion_t_plus_24h": 7.47309810096e-05,
+      "dispersion_t_plus_8h": 8.02060493709e-05,
+      "event_ts_utc": "2026-06-14T16:00:00Z",
+      "rates_t0": {
+        "bybit": 1.454e-05,
+        "hyperliquid": 1.25e-05,
+        "okx": -7.59112940001e-05
+      }
+    }
+  ],
+  "next_gate": "QUANT may review funding-only persistence/convergence after DataProvider turns this disposable pull into a reproducible fixture; no strategy/sizing gate yet.",
+  "observed_at_utc": "2026-06-17T00:59:23Z",
+  "sample_common_rows_tail": [
+    {
+      "dispersion_range": 8.14247750096e-05,
+      "dispersion_std": 3.8090495661580244e-05,
+      "event_ms": 1781510400000,
+      "event_ts_utc": "2026-06-15T08:00:00Z",
+      "max_abs_pair_spread": 8.14247750096e-05,
+      "mean_rate": -1.5061591669866666e-05,
+      "rates": {
+        "bybit": 1.124e-05,
+        "hyperliquid": 1.25e-05,
+        "okx": -6.89247750096e-05
+      }
+    },
+    {
+      "dispersion_range": 7.47309810096e-05,
+      "dispersion_std": 3.277226056514127e-05,
+      "event_ms": 1781539200000,
+      "event_ts_utc": "2026-06-15T16:00:00Z",
+      "max_abs_pair_spread": 7.47309810096e-05,
+      "mean_rate": -2.8075393669866665e-05,
+      "rates": {
+        "bybit": -1.115e-05,
+        "hyperliquid": 8.274e-07,
+        "okx": -7.39035810096e-05
+      }
+    },
+    {
+      "dispersion_range": 4.07699107801e-05,
+      "dispersion_std": 1.675159593966898e-05,
+      "event_ms": 1781568000000,
+      "event_ts_utc": "2026-06-16T00:00:00Z",
+      "max_abs_pair_spread": 4.07699107801e-05,
+      "mean_rate": 5.946196406633334e-06,
+      "rates": {
+        "bybit": 2.767e-05,
+        "hyperliquid": 3.2685e-06,
+        "okx": -1.30999107801e-05
+      }
+    },
+    {
+      "dispersion_range": 6.02471212018e-05,
+      "dispersion_std": 2.5994703279650193e-05,
+      "event_ms": 1781596800000,
+      "event_ts_utc": "2026-06-16T08:00:00Z",
+      "max_abs_pair_spread": 6.02471212018e-05,
+      "mean_rate": -3.505277373393334e-05,
+      "rates": {
+        "bybit": -4.695e-05,
+        "hyperliquid": 1.0194e-06,
+        "okx": -5.92277212018e-05
+      }
+    },
+    {
+      "dispersion_range": 5.9884330984300004e-05,
+      "dispersion_std": 2.472354599118396e-05,
+      "event_ms": 1781625600000,
+      "event_ts_utc": "2026-06-16T16:00:00Z",
+      "max_abs_pair_spread": 5.9884330984300004e-05,
+      "mean_rate": 1.6473523005233332e-05,
+      "rates": {
+        "bybit": 4.902e-05,
+        "hyperliquid": 1.12649e-05,
+        "okx": -1.08643309843e-05
+      }
+    }
+  ],
+  "scope": {
+    "asset": "BTC",
+    "end_utc": "2026-06-17T00:00:00Z",
+    "excluded": [
+      "current-state OI as historical evidence",
+      "regulated Coinbase/CME OI/funding historical claims",
+      "Trader handoff"
+    ],
+    "rails": "historical funding only",
+    "start_utc": "2026-05-18T00:00:00Z",
+    "venues": [
+      "bybit",
+      "okx",
+      "hyperliquid"
+    ]
+  },
+  "source_meta": {
+    "bybit": {
+      "calls": [
+        "https://api.bybit.com/v5/market/funding/history?category=linear&symbol=BTCUSDT&startTime=1779062400000&endTime=1781654400000&limit=200"
+      ],
+      "count": 91,
+      "endpoint": "https://api.bybit.com/v5/market/funding/history",
+      "replay_safe_history": true
+    },
+    "hyperliquid": {
+      "calls": [
+        {
+          "payload": {
+            "coin": "BTC",
+            "endTime": 1781654400000,
+            "startTime": 1779062400000,
+            "type": "fundingHistory"
+          },
+          "rows": 500,
+          "url": "https://api.hyperliquid.xyz/info"
+        },
+        {
+          "payload": {
+            "coin": "BTC",
+            "endTime": 1781654400000,
+            "startTime": 1780858800056,
+            "type": "fundingHistory"
+          },
+          "rows": 220,
+          "url": "https://api.hyperliquid.xyz/info"
+        }
+      ],
+      "count": 720,
+      "endpoint": "https://api.hyperliquid.xyz/info",
+      "replay_safe_history": true
+    },
+    "okx": {
+      "calls": [
+        "https://www.okx.com/api/v5/public/funding-rate-history?instId=BTC-USDT-SWAP&limit=100"
+      ],
+      "count": 91,
+      "endpoint": "https://www.okx.com/api/v5/public/funding-rate-history",
+      "note": "public endpoint returned latest page only; no older pagination attempted for first-pass if 30d fits limit=100",
+      "replay_safe_history": true
+    }
+  },
+  "summary_stats": {
+    "dispersion_range_max": 0.0001559339409731,
+    "dispersion_range_median": 5.905552215265e-05,
+    "dispersion_range_p75": 8.399159690015e-05,
+    "dispersion_range_p90_event_threshold": 9.015384220487001e-05,
+    "event_delta_dispersion_24h_mean": -5.515125954677778e-05,
+    "event_delta_dispersion_8h_mean": -4.6867501250300005e-05,
+    "events_with_24h_outcome": 9,
+    "events_with_8h_outcome": 9
+  }
+}

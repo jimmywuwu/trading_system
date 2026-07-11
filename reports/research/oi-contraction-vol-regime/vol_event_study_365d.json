@@ -1,0 +1,367 @@
+{
+  "fixture": "data/bybit_leverage_pressure_fixture_365d.jsonl",
+  "generated_at": "2026-07-08T00:39:44.539677",
+  "signal_params": {
+    "change_window": "4h",
+    "history_window": "14d",
+    "min_history": 300,
+    "trigger_percentile": 0.1,
+    "rearm_percentile": 0.2
+  },
+  "symbols": {
+    "BTCUSDT": {
+      "symbol": "BTCUSDT",
+      "raw_event_count": 153,
+      "full_vol_matched": {
+        "match_on": "vol",
+        "n_events": 110,
+        "n_controls": 42838,
+        "controls_per_event": 20,
+        "horizons": {
+          "4h": {
+            "n": 110,
+            "event_mean_vol": 0.009182655384874974,
+            "control_mean_vol": 0.00784383200930373,
+            "vol_lift": 0.17068486091788282,
+            "vol_lift_ci95": [
+              0.04798558294667643,
+              0.3398001591496589
+            ],
+            "event_mean_abs_return": 0.006755891082204083,
+            "control_mean_abs_return": 0.005329911806878885,
+            "abs_return_lift": 0.267542752486974,
+            "abs_return_lift_ci95": [
+              0.003875385860375058,
+              0.5750100276794718
+            ]
+          },
+          "8h": {
+            "n": 110,
+            "event_mean_vol": 0.01243810832137315,
+            "control_mean_vol": 0.011265212662383612,
+            "vol_lift": 0.10411660162493241,
+            "vol_lift_ci95": [
+              -0.035847214482987555,
+              0.3016427072271981
+            ],
+            "event_mean_abs_return": 0.008119183871948397,
+            "control_mean_abs_return": 0.008161833586226916,
+            "abs_return_lift": -0.005225506478163222,
+            "abs_return_lift_ci95": [
+              -0.2068905318634615,
+              0.22875947123365203
+            ]
+          },
+          "1d": {
+            "n": 110,
+            "event_mean_vol": 0.022419941294534305,
+            "control_mean_vol": 0.02028500888758533,
+            "vol_lift": 0.10524680658412633,
+            "vol_lift_ci95": [
+              0.010965260367720164,
+              0.22190265211861582
+            ],
+            "event_mean_abs_return": 0.017086504346836034,
+            "control_mean_abs_return": 0.014930385460779778,
+            "abs_return_lift": 0.14441146825847917,
+            "abs_return_lift_ci95": [
+              -0.0658677915038206,
+              0.3555047371816604
+            ]
+          }
+        },
+        "seed": 20260708
+      },
+      "full_return_matched": {
+        "match_on": "return",
+        "n_events": 110,
+        "n_controls": 43078,
+        "controls_per_event": 20,
+        "horizons": {
+          "4h": {
+            "n": 110,
+            "event_mean_vol": 0.009182655384874974,
+            "control_mean_vol": 0.008404360922925435,
+            "vol_lift": 0.09260602550117825,
+            "vol_lift_ci95": [
+              -0.02182161363235846,
+              0.23285510556324351
+            ],
+            "event_mean_abs_return": 0.006755891082204083,
+            "control_mean_abs_return": 0.00586537191110451,
+            "abs_return_lift": 0.15182654818761177,
+            "abs_return_lift_ci95": [
+              -0.0905444930804653,
+              0.43906808648105233
+            ]
+          },
+          "8h": {
+            "n": 110,
+            "event_mean_vol": 0.01243810832137315,
+            "control_mean_vol": 0.011909455080266676,
+            "vol_lift": 0.04438937277511745,
+            "vol_lift_ci95": [
+              -0.09196087079119275,
+              0.20936735461843647
+            ],
+            "event_mean_abs_return": 0.008119183871948397,
+            "control_mean_abs_return": 0.008544149290029281,
+            "abs_return_lift": -0.04973759278490175,
+            "abs_return_lift_ci95": [
+              -0.24482226427756149,
+              0.16443207264944926
+            ]
+          },
+          "1d": {
+            "n": 110,
+            "event_mean_vol": 0.022419941294534305,
+            "control_mean_vol": 0.02112029864029565,
+            "vol_lift": 0.06153524040417935,
+            "vol_lift_ci95": [
+              -0.039776194585266156,
+              0.17247890729221438
+            ],
+            "event_mean_abs_return": 0.017086504346836034,
+            "control_mean_abs_return": 0.015319428737656482,
+            "abs_return_lift": 0.11534866211009076,
+            "abs_return_lift_ci95": [
+              -0.09426982575858234,
+              0.3247684025535129
+            ]
+          }
+        },
+        "seed": 20260708
+      },
+      "midpoint": "2025-11-30T18:30:30+00:00",
+      "first_half": {
+        "match_on": "vol",
+        "n_events": 56,
+        "n_controls": 20960,
+        "controls_per_event": 20,
+        "horizons": {
+          "1d": {
+            "n": 56,
+            "event_mean_vol": 0.021103009989127095,
+            "control_mean_vol": 0.017317143712209594,
+            "vol_lift": 0.21861955642536168,
+            "vol_lift_ci95": [
+              0.037428033755999124,
+              0.488117643635394
+            ],
+            "event_mean_abs_return": 0.015373161163442355,
+            "control_mean_abs_return": 0.011881670545312764,
+            "abs_return_lift": 0.2938551952618278,
+            "abs_return_lift_ci95": [
+              0.02819377740809803,
+              0.6051829340034367
+            ]
+          }
+        },
+        "seed": 20260708
+      },
+      "second_half": {
+        "match_on": "vol",
+        "n_events": 54,
+        "n_controls": 21842,
+        "controls_per_event": 20,
+        "horizons": {
+          "1d": {
+            "n": 54,
+            "event_mean_vol": 0.023749849315044317,
+            "control_mean_vol": 0.02324873433600299,
+            "vol_lift": 0.021554505797990897,
+            "vol_lift_ci95": [
+              -0.06808446632768694,
+              0.11584011693883323
+            ],
+            "event_mean_abs_return": 0.018518827928661292,
+            "control_mean_abs_return": 0.017116135823505314,
+            "abs_return_lift": 0.08195144743065685,
+            "abs_return_lift_ci95": [
+              -0.2117956949545554,
+              0.4236015325937268
+            ]
+          }
+        },
+        "seed": 20260708
+      }
+    },
+    "ETHUSDT": {
+      "symbol": "ETHUSDT",
+      "raw_event_count": 176,
+      "full_vol_matched": {
+        "match_on": "vol",
+        "n_events": 117,
+        "n_controls": 39244,
+        "controls_per_event": 20,
+        "horizons": {
+          "4h": {
+            "n": 117,
+            "event_mean_vol": 0.013624786708280863,
+            "control_mean_vol": 0.011760993981641907,
+            "vol_lift": 0.15847238163272648,
+            "vol_lift_ci95": [
+              0.02407578352265216,
+              0.3594300393804173
+            ],
+            "event_mean_abs_return": 0.009546046756311046,
+            "control_mean_abs_return": 0.008411486412853638,
+            "abs_return_lift": 0.1348822654844548,
+            "abs_return_lift_ci95": [
+              -0.09469200463428096,
+              0.3980297411640703
+            ]
+          },
+          "8h": {
+            "n": 117,
+            "event_mean_vol": 0.01836611871682676,
+            "control_mean_vol": 0.017311997170639987,
+            "vol_lift": 0.06088965564149307,
+            "vol_lift_ci95": [
+              -0.048347920944902034,
+              0.20059788391149813
+            ],
+            "event_mean_abs_return": 0.010917065088645088,
+            "control_mean_abs_return": 0.01364035978049601,
+            "abs_return_lift": -0.19964976992358285,
+            "abs_return_lift_ci95": [
+              -0.35499103121947706,
+              -0.032360407630456334
+            ]
+          },
+          "1d": {
+            "n": 117,
+            "event_mean_vol": 0.034047273558177084,
+            "control_mean_vol": 0.031016582333845213,
+            "vol_lift": 0.09771196554511397,
+            "vol_lift_ci95": [
+              0.026605278919916042,
+              0.17776736636039892
+            ],
+            "event_mean_abs_return": 0.025293970016980666,
+            "control_mean_abs_return": 0.02333888274426303,
+            "abs_return_lift": 0.08376953147846034,
+            "abs_return_lift_ci95": [
+              -0.10650342614906028,
+              0.300774832996356
+            ]
+          }
+        },
+        "seed": 20260708
+      },
+      "full_return_matched": {
+        "match_on": "return",
+        "n_events": 117,
+        "n_controls": 39484,
+        "controls_per_event": 20,
+        "horizons": {
+          "4h": {
+            "n": 117,
+            "event_mean_vol": 0.013624786708280863,
+            "control_mean_vol": 0.01188269315254934,
+            "vol_lift": 0.14660763627964002,
+            "vol_lift_ci95": [
+              0.003142917066662587,
+              0.33992284318160193
+            ],
+            "event_mean_abs_return": 0.009546046756311046,
+            "control_mean_abs_return": 0.008748148603946447,
+            "abs_return_lift": 0.09120765872731651,
+            "abs_return_lift_ci95": [
+              -0.11094153556361463,
+              0.3115099503129224
+            ]
+          },
+          "8h": {
+            "n": 117,
+            "event_mean_vol": 0.01836611871682676,
+            "control_mean_vol": 0.017039144046967197,
+            "vol_lift": 0.07787801231105562,
+            "vol_lift_ci95": [
+              -0.034429484593236914,
+              0.211724464529778
+            ],
+            "event_mean_abs_return": 0.010917065088645088,
+            "control_mean_abs_return": 0.01304971531479026,
+            "abs_return_lift": -0.16342503837827582,
+            "abs_return_lift_ci95": [
+              -0.315975367531218,
+              0.001550572174548348
+            ]
+          },
+          "1d": {
+            "n": 117,
+            "event_mean_vol": 0.034047273558177084,
+            "control_mean_vol": 0.030261852129074333,
+            "vol_lift": 0.1250888879159473,
+            "vol_lift_ci95": [
+              0.035611347205621424,
+              0.21652061863583483
+            ],
+            "event_mean_abs_return": 0.025293970016980666,
+            "control_mean_abs_return": 0.023155058878856643,
+            "abs_return_lift": 0.09237338368753223,
+            "abs_return_lift_ci95": [
+              -0.08999932520418297,
+              0.2880401103110657
+            ]
+          }
+        },
+        "seed": 20260708
+      },
+      "midpoint": "2025-11-30T18:30:30+00:00",
+      "first_half": {
+        "match_on": "vol",
+        "n_events": 57,
+        "n_controls": 20221,
+        "controls_per_event": 20,
+        "horizons": {
+          "1d": {
+            "n": 57,
+            "event_mean_vol": 0.03720664707643306,
+            "control_mean_vol": 0.03129466924125544,
+            "vol_lift": 0.18891325514902424,
+            "vol_lift_ci95": [
+              0.08788108763870994,
+              0.3128008420243551
+            ],
+            "event_mean_abs_return": 0.025120055356307253,
+            "control_mean_abs_return": 0.025228445483196967,
+            "abs_return_lift": -0.004296345843500582,
+            "abs_return_lift_ci95": [
+              -0.2166660796797134,
+              0.24920109193467033
+            ]
+          }
+        },
+        "seed": 20260708
+      },
+      "second_half": {
+        "match_on": "vol",
+        "n_events": 60,
+        "n_controls": 18974,
+        "controls_per_event": 20,
+        "horizons": {
+          "1d": {
+            "n": 60,
+            "event_mean_vol": 0.031045868715833477,
+            "control_mean_vol": 0.03045880546481218,
+            "vol_lift": 0.019274007698677043,
+            "vol_lift_ci95": [
+              -0.07688861985651041,
+              0.11865519554381843
+            ],
+            "event_mean_abs_return": 0.02545918894462041,
+            "control_mean_abs_return": 0.0200383137595594,
+            "abs_return_lift": 0.27052551677283465,
+            "abs_return_lift_ci95": [
+              -0.05610484739960686,
+              0.6690621527067877
+            ]
+          }
+        },
+        "seed": 20260708
+      }
+    }
+  }
+}

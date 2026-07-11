@@ -1,0 +1,112 @@
+{
+  "quality": {
+    "BTCUSDT": {
+      "fixture_hours": 8761,
+      "oi_distinct_hours": 3294,
+      "oi_hour_coverage_ratio": 0.3759844766579158,
+      "oi_gaps_gt_1h": 182,
+      "max_oi_gap_h": 31.0,
+      "eligible_event_rows": 2534
+    },
+    "ETHUSDT": {
+      "fixture_hours": 8761,
+      "oi_distinct_hours": 3294,
+      "oi_hour_coverage_ratio": 0.3759844766579158,
+      "oi_gaps_gt_1h": 182,
+      "max_oi_gap_h": 31.0,
+      "eligible_event_rows": 2534
+    }
+  },
+  "bootstrap": [
+    {
+      "symbol": "BTCUSDT",
+      "h": 4,
+      "event_n": 254,
+      "control_n": 345,
+      "event_mean": 0.00645183696838306,
+      "control_mean_equalized_candidate": 0.006517512908273942,
+      "diff_ci": [
+        -0.001253017459679067,
+        -9.023071505154462e-05,
+        0.0011002293733076483
+      ],
+      "cluster_n": 90,
+      "cluster_mean": 0.006940133722487804
+    },
+    {
+      "symbol": "BTCUSDT",
+      "h": 24,
+      "event_n": 254,
+      "control_n": 345,
+      "event_mean": 0.020181929623793903,
+      "control_mean_equalized_candidate": 0.018607718245653163,
+      "diff_ci": [
+        -0.0018591038097311335,
+        0.001548319774483874,
+        0.005043075107212737
+      ],
+      "cluster_n": 90,
+      "cluster_mean": 0.01718988471417543
+    },
+    {
+      "symbol": "BTCUSDT",
+      "h": 48,
+      "event_n": 254,
+      "control_n": 345,
+      "event_mean": 0.029281628097468895,
+      "control_mean_equalized_candidate": 0.026606098193665644,
+      "diff_ci": [
+        -0.001991266630930226,
+        0.00264517986313041,
+        0.00718099918309326
+      ],
+      "cluster_n": 90,
+      "cluster_mean": 0.02718545605431232
+    },
+    {
+      "symbol": "ETHUSDT",
+      "h": 4,
+      "event_n": 254,
+      "control_n": 266,
+      "event_mean": 0.009410214959381128,
+      "control_mean_equalized_candidate": 0.010528827818834638,
+      "diff_ci": [
+        -0.0030184856516461173,
+        -0.0010752514592517826,
+        0.0007706255491714755
+      ],
+      "cluster_n": 95,
+      "cluster_mean": 0.010009502707282455
+    },
+    {
+      "symbol": "ETHUSDT",
+      "h": 24,
+      "event_n": 254,
+      "control_n": 266,
+      "event_mean": 0.02789519099526663,
+      "control_mean_equalized_candidate": 0.025294860605641904,
+      "diff_ci": [
+        -0.0017630531126234085,
+        0.002633052227992842,
+        0.0070680351145292145
+      ],
+      "cluster_n": 95,
+      "cluster_mean": 0.025893873932785992
+    },
+    {
+      "symbol": "ETHUSDT",
+      "h": 48,
+      "event_n": 254,
+      "control_n": 266,
+      "event_mean": 0.042499042528411114,
+      "control_mean_equalized_candidate": 0.03979074601938124,
+      "diff_ci": [
+        -0.003958581213285213,
+        0.0027738754233210226,
+        0.009368636794458853
+      ],
+      "cluster_n": 95,
+      "cluster_mean": 0.039228189050568414
+    }
+  ]
+}

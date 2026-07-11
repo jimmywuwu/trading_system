@@ -1,0 +1,265 @@
+{
+  "coverage_1h": {
+    "candle|BTCUSDT|linear_perp": {
+      "bucket_count": 8761,
+      "first": "2025-06-01T06:00:00Z",
+      "gaps_gt_1h": 0,
+      "gaps_gt_expected": 0,
+      "last": "2026-06-01T06:00:00Z",
+      "max_gap_minutes": 60.0
+    },
+    "candle|BTCUSDT|spot": {
+      "bucket_count": 8761,
+      "first": "2025-06-01T06:00:00Z",
+      "gaps_gt_1h": 0,
+      "gaps_gt_expected": 0,
+      "last": "2026-06-01T06:00:00Z",
+      "max_gap_minutes": 60.0
+    },
+    "candle|ETHUSDT|linear_perp": {
+      "bucket_count": 8761,
+      "first": "2025-06-01T06:00:00Z",
+      "gaps_gt_1h": 0,
+      "gaps_gt_expected": 0,
+      "last": "2026-06-01T06:00:00Z",
+      "max_gap_minutes": 60.0
+    },
+    "candle|ETHUSDT|spot": {
+      "bucket_count": 8761,
+      "first": "2025-06-01T06:00:00Z",
+      "gaps_gt_1h": 0,
+      "gaps_gt_expected": 0,
+      "last": "2026-06-01T06:00:00Z",
+      "max_gap_minutes": 60.0
+    },
+    "perp_funding_rate|BTCUSDT|linear_perp": {
+      "bucket_count": 1095,
+      "first": "2025-06-01T08:00:00Z",
+      "gaps_gt_1h": 1094,
+      "gaps_gt_expected": 1094,
+      "last": "2026-06-01T00:00:00Z",
+      "max_gap_minutes": 480.0
+    },
+    "perp_funding_rate|ETHUSDT|linear_perp": {
+      "bucket_count": 1095,
+      "first": "2025-06-01T08:00:00Z",
+      "gaps_gt_1h": 1094,
+      "gaps_gt_expected": 1094,
+      "last": "2026-06-01T00:00:00Z",
+      "max_gap_minutes": 480.0
+    },
+    "perp_mark_price|BTCUSDT|linear_perp_mark_price": {
+      "bucket_count": 8761,
+      "first": "2025-06-01T06:00:00Z",
+      "gaps_gt_1h": 0,
+      "gaps_gt_expected": 0,
+      "last": "2026-06-01T06:00:00Z",
+      "max_gap_minutes": 60.0
+    },
+    "perp_mark_price|ETHUSDT|linear_perp_mark_price": {
+      "bucket_count": 8761,
+      "first": "2025-06-01T06:00:00Z",
+      "gaps_gt_1h": 0,
+      "gaps_gt_expected": 0,
+      "last": "2026-06-01T06:00:00Z",
+      "max_gap_minutes": 60.0
+    },
+    "perp_open_interest|BTCUSDT|linear_perp": {
+      "bucket_count": 8761,
+      "first": "2025-06-01T06:00:00Z",
+      "gaps_gt_1h": 0,
+      "gaps_gt_expected": 0,
+      "last": "2026-06-01T06:00:00Z",
+      "max_gap_minutes": 60.0
+    },
+    "perp_open_interest|ETHUSDT|linear_perp": {
+      "bucket_count": 8761,
+      "first": "2025-06-01T06:00:00Z",
+      "gaps_gt_1h": 0,
+      "gaps_gt_expected": 0,
+      "last": "2026-06-01T06:00:00Z",
+      "max_gap_minutes": 60.0
+    },
+    "perp_spot_basis|BTCUSDT|derived": {
+      "bucket_count": 8761,
+      "first": "2025-06-01T06:00:00Z",
+      "gaps_gt_1h": 0,
+      "gaps_gt_expected": 0,
+      "last": "2026-06-01T06:00:00Z",
+      "max_gap_minutes": 60.0
+    },
+    "perp_spot_basis|ETHUSDT|derived": {
+      "bucket_count": 8761,
+      "first": "2025-06-01T06:00:00Z",
+      "gaps_gt_1h": 0,
+      "gaps_gt_expected": 0,
+      "last": "2026-06-01T06:00:00Z",
+      "max_gap_minutes": 60.0
+    }
+  },
+  "coverage_5m": {
+    "candle|BTCUSDT|linear_perp": {
+      "bucket_count": 105119,
+      "first": "2025-06-01T06:35:00Z",
+      "gaps_gt_1h": 0,
+      "gaps_gt_expected": 0,
+      "last": "2026-06-01T06:25:00Z",
+      "max_gap_minutes": 5.0
+    },
+    "candle|BTCUSDT|spot": {
+      "bucket_count": 105119,
+      "first": "2025-06-01T06:35:00Z",
+      "gaps_gt_1h": 0,
+      "gaps_gt_expected": 0,
+      "last": "2026-06-01T06:25:00Z",
+      "max_gap_minutes": 5.0
+    },
+    "candle|ETHUSDT|linear_perp": {
+      "bucket_count": 105119,
+      "first": "2025-06-01T06:35:00Z",
+      "gaps_gt_1h": 0,
+      "gaps_gt_expected": 0,
+      "last": "2026-06-01T06:25:00Z",
+      "max_gap_minutes": 5.0
+    },
+    "candle|ETHUSDT|spot": {
+      "bucket_count": 105119,
+      "first": "2025-06-01T06:35:00Z",
+      "gaps_gt_1h": 0,
+      "gaps_gt_expected": 0,
+      "last": "2026-06-01T06:25:00Z",
+      "max_gap_minutes": 5.0
+    },
+    "perp_funding_rate|BTCUSDT|linear_perp": {
+      "bucket_count": 1095,
+      "first": "2025-06-01T08:00:00Z",
+      "gaps_gt_1h": 1094,
+      "gaps_gt_expected": 1094,
+      "last": "2026-06-01T00:00:00Z",
+      "max_gap_minutes": 480.0
+    },
+    "perp_funding_rate|ETHUSDT|linear_perp": {
+      "bucket_count": 1095,
+      "first": "2025-06-01T08:00:00Z",
+      "gaps_gt_1h": 1094,
+      "gaps_gt_expected": 1094,
+      "last": "2026-06-01T00:00:00Z",
+      "max_gap_minutes": 480.0
+    },
+    "perp_mark_price|BTCUSDT|linear_perp_mark_price": {
+      "bucket_count": 105119,
+      "first": "2025-06-01T06:35:00Z",
+      "gaps_gt_1h": 0,
+      "gaps_gt_expected": 0,
+      "last": "2026-06-01T06:25:00Z",
+      "max_gap_minutes": 5.0
+    },
+    "perp_mark_price|ETHUSDT|linear_perp_mark_price": {
+      "bucket_count": 105119,
+      "first": "2025-06-01T06:35:00Z",
+      "gaps_gt_1h": 0,
+      "gaps_gt_expected": 0,
+      "last": "2026-06-01T06:25:00Z",
+      "max_gap_minutes": 5.0
+    },
+    "perp_open_interest|BTCUSDT|linear_perp": {
+      "bucket_count": 105120,
+      "first": "2025-06-01T06:30:00Z",
+      "gaps_gt_1h": 0,
+      "gaps_gt_expected": 0,
+      "last": "2026-06-01T06:25:00Z",
+      "max_gap_minutes": 5.0
+    },
+    "perp_open_interest|ETHUSDT|linear_perp": {
+      "bucket_count": 105120,
+      "first": "2025-06-01T06:30:00Z",
+      "gaps_gt_1h": 0,
+      "gaps_gt_expected": 0,
+      "last": "2026-06-01T06:25:00Z",
+      "max_gap_minutes": 5.0
+    },
+    "perp_spot_basis|BTCUSDT|derived": {
+      "bucket_count": 105119,
+      "first": "2025-06-01T06:35:00Z",
+      "gaps_gt_1h": 0,
+      "gaps_gt_expected": 0,
+      "last": "2026-06-01T06:25:00Z",
+      "max_gap_minutes": 5.0
+    },
+    "perp_spot_basis|ETHUSDT|derived": {
+      "bucket_count": 105119,
+      "first": "2025-06-01T06:35:00Z",
+      "gaps_gt_1h": 0,
+      "gaps_gt_expected": 0,
+      "last": "2026-06-01T06:25:00Z",
+      "max_gap_minutes": 5.0
+    }
+  },
+  "fixture": "data/regenerated/bybit_leverage_pressure_fixture_365d_20260614_regen.jsonl",
+  "fixture_versions": {
+    "bybit-20260614T095616Z": 1053382
+  },
+  "kind_counts": {
+    "candle": 420476,
+    "perp_funding_rate": 2190,
+    "perp_mark_price": 210238,
+    "perp_open_interest": 210240,
+    "perp_spot_basis": 210238
+  },
+  "kind_symbol_market_counts": {
+    "candle|BTCUSDT|linear_perp": 105119,
+    "candle|BTCUSDT|spot": 105119,
+    "candle|ETHUSDT|linear_perp": 105119,
+    "candle|ETHUSDT|spot": 105119,
+    "perp_funding_rate|BTCUSDT|linear_perp": 1095,
+    "perp_funding_rate|ETHUSDT|linear_perp": 1095,
+    "perp_mark_price|BTCUSDT|linear_perp_mark_price": 105119,
+    "perp_mark_price|ETHUSDT|linear_perp_mark_price": 105119,
+    "perp_open_interest|BTCUSDT|linear_perp": 105120,
+    "perp_open_interest|ETHUSDT|linear_perp": 105120,
+    "perp_spot_basis|BTCUSDT|derived": 105119,
+    "perp_spot_basis|ETHUSDT|derived": 105119
+  },
+  "line_count": 1053382,
+  "oi_candle_alignment": {
+    "BTCUSDT": {
+      "linear_perp_candle_hour_buckets": 8761,
+      "linear_perp_candle_hours_missing_oi": 0,
+      "oi_hour_buckets": 8761,
+      "oi_hours_missing_any_linear_perp_candle": 0,
+      "oi_notional_present_rows": 105119,
+      "oi_raw_present_rows": 105120
+    },
+    "ETHUSDT": {
+      "linear_perp_candle_hour_buckets": 8761,
+      "linear_perp_candle_hours_missing_oi": 0,
+      "oi_hour_buckets": 8761,
+      "oi_hours_missing_any_linear_perp_candle": 0,
+      "oi_notional_present_rows": 105119,
+      "oi_raw_present_rows": 105120
+    }
+  },
+  "raw_payload_hash_missing_rows": 0,
+  "replay_visibility": {
+    "conservative_simulated_observed_at": 1053382
+  },
+  "retrieved_at_missing_rows": 0,
+  "source_endpoints": {
+    "/v5/market/funding/history": 2190,
+    "/v5/market/kline": 420476,
+    "/v5/market/mark-price-kline": 210238,
+    "/v5/market/open-interest": 210240,
+    "derived:perp_spot_basis": 210238
+  },
+  "symbol_counts": {
+    "BTCUSDT": 526691,
+    "ETHUSDT": 526691
+  },
+  "timestamp_issues": {},
+  "visibility_notes": {
+    "derived observation is visible only after both source candles are visible": 210238,
+    "historical closed candle observed_at is simulated as interval close + publication lag": 630714,
+    "historical funding is settled funding; predicted/quoted history is not reconstructed": 2190,
+    "historical observed_at is simulated as timestamp + 60s; not archived receive time": 210240
+  }
+}

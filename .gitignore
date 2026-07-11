@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+
+# 歷史資料導出（Observation JSONL），不進 git
+data/
